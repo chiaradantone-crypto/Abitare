@@ -1,0 +1,1245 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+input,select,textarea,button{font-family:inherit;font-size:13px}
+textarea{width:100%;resize:vertical;padding:7px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);line-height:1.5;min-height:52px}
+textarea:focus,input:focus,select:focus{outline:none;border-color:#1D9E75}
+input[type=text],input[type=password]{width:100%;padding:7px 9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+select{padding:7px 9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.hidden{display:none!important}
+
+.login-wrap{display:flex;align-items:center;justify-content:center;padding:3rem 1rem;min-height:420px}
+.login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:2rem;width:100%;max-width:340px}
+.brand{text-align:center;margin-bottom:1.5rem}
+.brand-name{font-size:22px;font-weight:500;color:#0F6E56}
+.brand-sub{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+.fl{margin-bottom:11px}
+.fl label{display:block;font-size:11px;font-weight:600;color:var(--color-text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.hint{font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.6;margin-top:10px}
+.err{background:#FCEBEB;color:#A32D2D;border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;margin-bottom:10px}
+
+.btn{padding:6px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-p{background:#1D9E75;color:#fff;border:none;padding:9px 16px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-p:hover{background:#0F6E56}
+.btn-p.full{width:100%}
+.btn-red{background:transparent;color:#A32D2D;border:0.5px solid #E24B4A;padding:5px 9px;border-radius:var(--border-radius-md);cursor:pointer;font-size:11px;display:inline-flex;align-items:center;gap:4px}
+.btn-red:hover{background:#FCEBEB}
+
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{font-size:15px;font-weight:500;color:#0F6E56}
+.chip{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.chip-edu{background:#E1F5EE;color:#0F6E56}
+.chip-coord{background:#E6F1FB;color:#185FA5}
+.sync{font-size:11px;color:var(--color-text-tertiary);display:flex;align-items:center;gap:4px}
+
+.layout{display:flex;flex:1;min-height:0}
+.sidebar{width:185px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:6px 0;flex-shrink:0;overflow-y:auto}
+.nav-sec{font-size:10px;color:var(--color-text-tertiary);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:10px 13px 4px}
+.nav-item{display:flex;align-items:center;gap:7px;padding:8px 13px;cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:#E1F5EE;color:#0F6E56;font-weight:500}
+.content{flex:1;overflow-y:auto;padding:14px}
+
+.pg-title{font-size:16px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.pg-title .ti{font-size:18px;color:#1D9E75}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:10px}
+.card-hd{font-size:13px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.card-hd-l{display:flex;align-items:center;gap:6px}
+.card-hd-l .ti{color:#1D9E75}
+
+.sbt-wrap{display:flex;gap:2px;flex-shrink:0}
+.sbt{width:28px;height:26px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);font-size:11px;font-weight:600;cursor:pointer;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;transition:all .1s}
+.sbt:hover:not([disabled]){transform:scale(1.1)}
+.sbt[disabled]{opacity:.4;cursor:not-allowed}
+.sbt.a1{background:#F7C1C1!important;border-color:#E24B4A!important;color:#A32D2D!important}
+.sbt.a2{background:#FAC775!important;border-color:#BA7517!important;color:#854F0B!important}
+.sbt.a3{background:#B5D4F4!important;border-color:#185FA5!important;color:#0C447C!important}
+.sbt.a4{background:#C0DD97!important;border-color:#3B6D11!important;color:#27500A!important}
+.sbt.a5{background:#9FE1CB!important;border-color:#0F6E56!important;color:#085041!important}
+.item-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.item-row:last-child{border-bottom:none}
+.item-lbl{flex:1;font-size:12px;line-height:1.4;padding-top:4px}
+.score-hist{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.hist-up{color:#0F6E56;font-weight:600}
+
+.obj-block{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px;margin-bottom:9px}
+.obj-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
+.obj-title{font-size:13px;font-weight:500}
+.obj-actions{display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
+.sub-row{padding:6px 0;border-top:0.5px solid var(--color-border-tertiary)}
+.sub-top{display:flex;align-items:center;gap:5px}
+.sub-lbl{flex:1;font-size:12px}
+.entry-panel{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px;margin-top:6px}
+.mini-scores{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0 7px}
+.msb{padding:4px 9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);font-size:11px;cursor:pointer;font-weight:500}
+.msb:hover{background:var(--color-background-secondary)}
+.msb.sel{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.entry-list{margin-top:5px;display:flex;flex-direction:column;gap:3px}
+.eitem{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:6px 9px;font-size:11px}
+.emeta{color:var(--color-text-tertiary);margin-bottom:2px}
+.ecoord{color:#185FA5;margin-top:3px;padding-top:3px;border-top:0.5px solid var(--color-border-tertiary)}
+
+.pei-sect{margin-bottom:10px}
+.pei-sect label{font-size:11px;font-weight:600;color:var(--color-text-secondary);display:block;margin-bottom:4px}
+.pei-obj{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;margin-bottom:8px}
+.pei-obj-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+
+.admin-row{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.admin-row:last-child{border-bottom:none}
+.area-block{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px;margin-bottom:8px}
+.area-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:6px}
+.field-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.field-row .f{flex:1;min-width:140px}
+.field-row .f label{display:block;font-size:11px;font-weight:600;color:var(--color-text-secondary);margin-bottom:4px}
+.field-row .f.full{flex:100%;min-width:100%}
+
+.chart-wrap{position:relative;width:100%;height:200px;margin-bottom:8px}
+.user-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);cursor:pointer;margin-bottom:6px;text-align:left;width:100%}
+.user-btn:hover{background:var(--color-background-secondary)}
+.user-btn.sel{border-color:#1D9E75;background:#E1F5EE}
+.avatar{width:34px;height:34px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0F6E56;flex-shrink:0}
+.extra-field-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.extra-field-row:last-child{border-bottom:none}
+.info-box{background:#E6F1FB;border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;color:#185FA5;margin-bottom:8px}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(0,0,0,.1);border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:1.5rem;color:var(--color-text-tertiary);font-size:12px}
+.inline-form{background:var(--color-background-secondary);border:1px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px;margin-top:8px}
+.inline-form-title{font-size:12px;font-weight:600;margin-bottom:7px;color:var(--color-text-secondary)}
+.confirm-box{background:#FCEBEB;border-radius:var(--border-radius-md);padding:9px;margin-top:6px;font-size:12px;color:#A32D2D}
+.confirm-box .row-btns{display:flex;gap:6px;margin-top:6px}
+</style>
+
+<div id="app" style="display:flex;flex-direction:column;min-height:500px">
+
+<div class="login-wrap" id="loginWrap">
+<div class="login-card">
+  <div class="brand">
+    <div class="brand-name">🌿 ORA VADO</div>
+    <div class="brand-sub">Piattaforma educativa condivisa</div>
+  </div>
+  <div id="loginErr" class="err hidden"></div>
+  <div class="fl"><label>Codice operatore</label><input type="text" id="codeIn" placeholder="es. EDU001" onkeydown="if(event.key==='Enter')document.getElementById('pwIn').focus()" /></div>
+  <div class="fl"><label>Password</label><input type="password" id="pwIn" placeholder="Password condivisa del team" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+  <button class="btn-p full" onclick="doLogin()">Accedi</button>
+  <div class="hint">Demo: <strong>EDU001</strong> o <strong>EDU002</strong> (educatore) · <strong>COORD01</strong> (Chiara Dantone, coordinatrice)<br>Password demo: <strong>oravado2024</strong></div>
+</div>
+</div>
+
+<div id="mainWrap" class="hidden" style="display:flex;flex-direction:column;flex:1">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:9px">
+      <span class="logo">🌿 ORA VADO</span>
+      <span class="chip" id="roleChip"></span>
+      <span style="font-size:12px;color:var(--color-text-secondary)" id="userNameTop"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="sync" id="syncInd">☁️ Sincronizzato</span>
+      <button class="btn" onclick="doLogout()" style="color:#A32D2D;border-color:#E24B4A">⏻ Esci</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-sec">Utente</div>
+      <div class="nav-item" id="n-sel" onclick="go('sel')"><i class="ti ti-users" aria-hidden="true"></i> Seleziona</div>
+      <div class="nav-item" id="n-scheda" onclick="go('scheda')"><i class="ti ti-id-badge" aria-hidden="true"></i> Scheda</div>
+      <div class="nav-item" id="n-admin" onclick="go('admin')"><i class="ti ti-settings" aria-hidden="true"></i> Gestione</div>
+      <div class="nav-sec">Sezioni</div>
+      <div class="nav-item" id="n-val" onclick="go('val')"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Valutazione</div>
+      <div class="nav-item" id="n-pei" onclick="go('pei')"><i class="ti ti-file-description" aria-hidden="true"></i> PEI</div>
+      <div class="nav-item" id="n-obj" onclick="go('obj')"><i class="ti ti-target" aria-hidden="true"></i> Obiettivi</div>
+      <div class="nav-item" id="n-and" onclick="go('and')"><i class="ti ti-chart-line" aria-hidden="true"></i> Andamento</div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════
+   CONSTANTS & STATE
+═══════════════════════════════════════════════════════ */
+const SL={1:'NO',2:'AF',3:'AV/D',4:'Pres.',5:'SI'};
+const SD={1:'Non eseguito',2:'Supporto fisico',3:'Verbale/visivo',4:'Presente senza supporto',5:'Autonomia piena'};
+const CC=['#1D9E75','#185FA5','#854F0B','#A32D2D','#534AB7','#3B6D11','#D85A30','#D4537E'];
+const DEFAULT_PASSWORD='oravado2024';
+
+const DEF_USERS=[
+  {id:'EDU001',name:'Marco Bianchi',role:'educator'},
+  {id:'EDU002',name:'Laura Rossi',role:'educator'},
+  {id:'COORD01',name:'Chiara Dantone',role:'coordinator'}
+];
+const DEF_CLIENTS=[
+  {id:'pietro',name:'Pietro Verdi',birth:'2001',diagnosis:'ASD livello 2'},
+  {id:'sara',name:'Sara Conti',birth:'1999',diagnosis:'Disabilità intellettiva lieve'}
+];
+const DEF_AREAS=[
+  {id:'igiene',label:'Igiene personale e cura di sé',icon:'💧',items:[
+    {id:'a1',label:'Comunica il bisogno di usare il bagno'},
+    {id:'a2',label:'Svolge tutti i passaggi in bagno correttamente'},
+    {id:'a3',label:'Sa lavarsi mani e viso'},
+    {id:'a4',label:'Si fa la doccia/bagno autonomamente'},
+    {id:'a5',label:'Usa correttamente l\'asciugacapelli'},
+    {id:'a6',label:'Segue la sequenza completa del lavaggio corpo'},
+    {id:'a7',label:'Si lava i denti'},
+    {id:'a8',label:'Sa pettinarsi'},
+    {id:'a9',label:'Si prende cura della propria pelle'},
+    {id:'a10',label:'Sa tenersi pulito durante la giornata'}
+  ]},
+  {id:'vestiario',label:'Vestiario e cura degli abiti',icon:'👕',items:[
+    {id:'b1',label:'Si veste e si sveste autonomamente'},
+    {id:'b2',label:'Sa allacciarsi le scarpe'},
+    {id:'b3',label:'Ripone in ordine gli indumenti'},
+    {id:'b4',label:'Mantiene ordine in cassetti/armadio'},
+    {id:'b5',label:'Sceglie indumenti adeguati alla stagione'},
+    {id:'b6',label:'Discrimina sporco/pulito'},
+    {id:'b7',label:'Sa usare la lavatrice'},
+    {id:'b8',label:'Sa stendere i panni'}
+  ]},
+  {id:'cucina',label:'Alimentazione e cucina',icon:'🍳',items:[
+    {id:'c1',label:'Sa tagliare il cibo nel piatto'},
+    {id:'c2',label:'Sa preparare caffè/tè'},
+    {id:'c3',label:'Sa preparare pasti semplici'},
+    {id:'c4',label:'Usa fornelli/piastre'},
+    {id:'c5',label:'Sa usare forno/microonde'},
+    {id:'c6',label:'Apparecchia e sparecchia la tavola'},
+    {id:'c7',label:'Lava piatti / usa la lavastoviglie'},
+    {id:'c8',label:'Sa fare la lista della spesa'}
+  ]},
+  {id:'spesa',label:'Spesa e gestione alimentare',icon:'🛒',items:[
+    {id:'s1',label:'Verifica quanto già presente in dispensa'},
+    {id:'s2',label:'È consapevole delle scadenze degli alimenti'},
+    {id:'s3',label:'Sa pianificare cosa acquistare per la settimana'},
+    {id:'s4',label:'Sa orientarsi in un supermercato'},
+    {id:'s5',label:'Confronta prezzi e sceglie prodotti'},
+    {id:'s6',label:'Gestisce il budget per la spesa'}
+  ]},
+  {id:'casa',label:'Gestione domestica',icon:'🏠',items:[
+    {id:'d1',label:'Usa scopa e mop'},
+    {id:'d2',label:'Sa usare l\'aspirapolvere'},
+    {id:'d3',label:'Sa rifarsi il letto e cambiare le lenzuola'},
+    {id:'d4',label:'Gestisce la raccolta differenziata'},
+    {id:'d5',label:'Porta fuori l\'immondizia'},
+    {id:'d6',label:'Apre e chiude la porta a chiave'}
+  ]},
+  {id:'autonomia',label:'Autonomia esterna e denaro',icon:'🚶',items:[
+    {id:'e1',label:'Sa orientarsi in ambiente esterno'},
+    {id:'e2',label:'Si reca autonomamente ai negozi'},
+    {id:'e3',label:'Sa usare mezzi di trasporto pubblico'},
+    {id:'e4',label:'Mantiene comportamento adeguato in pubblico'},
+    {id:'e5',label:'Sa chiamare i soccorsi in emergenza'},
+    {id:'e6',label:'Sa effettuare un pagamento'},
+    {id:'e7',label:'Sa gestire un budget settimanale'}
+  ]},
+  {id:'sociale',label:'Comunicazione e relazioni',icon:'💬',items:[
+    {id:'f1',label:'Usa comunicazione verbale in modo efficace'},
+    {id:'f2',label:'Sa chiedere aiuto'},
+    {id:'f3',label:'Sa usare il telefono cellulare'},
+    {id:'f4',label:'Rispetta le regole sociali di base'},
+    {id:'f5',label:'Tollera frustrazioni e interruzioni'},
+    {id:'f6',label:'Accetta correzioni e le applica'},
+    {id:'f7',label:'Sa fare e mantenere amicizie'}
+  ]}
+];
+const DEF_SCHEDA_FIELDS=[
+  {id:'residenza',label:'Residenza'},
+  {id:'telefono',label:'Telefono'},
+  {id:'email',label:'Email'},
+  {id:'cf',label:'Codice fiscale'},
+  {id:'madre_nome',label:'Madre — nome e cognome'},
+  {id:'madre_tel',label:'Madre — telefono'},
+  {id:'padre_nome',label:'Padre — nome e cognome'},
+  {id:'padre_tel',label:'Padre — telefono'},
+  {id:'assistente_sociale',label:'Assistente sociale'},
+  {id:'as_tel',label:'Ass. sociale — telefono'},
+  {id:'as_ente',label:'Ass. sociale — ente'},
+  {id:'ads',label:'Amministratore di sostegno'},
+  {id:'ads_tel',label:'ADS — telefono'},
+  {id:'medico',label:'Medico di base'},
+  {id:'medico_tel',label:'Medico — telefono'},
+  {id:'terapia_farm',label:'Terapia farmacologica'},
+  {id:'terapia_psico',label:'Terapia psicologica'},
+  {id:'altre_terapie',label:'Altre terapie / riabilitazione'},
+  {id:'note',label:'Note generali'}
+];
+
+let S={user:null,role:null,client:null,page:'sel'};
+let chartInst=[];
+let pendingScores={};
+let openForms={};
+
+/* ═══════════════════════════════════════════════════════
+   STORAGE
+═══════════════════════════════════════════════════════ */
+async function sGet(k){
+  try{const r=await window.storage.get(k,true);return r?JSON.parse(r.value):null;}
+  catch(e){return null;}
+}
+async function sSet(k,v){
+  try{await window.storage.set(k,JSON.stringify(v),true);}
+  catch(e){console.error('Storage error',k,e);}
+}
+async function sDel(k){try{await window.storage.delete(k,true);}catch(e){}}
+
+async function getPassword(){return(await sGet('ov_password'))||DEFAULT_PASSWORD;}
+async function getUsers(){return(await sGet('ov_users'))||DEF_USERS;}
+async function saveUsers(u){await sSet('ov_users',u);}
+async function getClients(){return(await sGet('ov_clients'))||DEF_CLIENTS;}
+async function saveClients(c){await sSet('ov_clients',c);}
+async function getAreas(){return(await sGet('ov_areas'))||DEF_AREAS;}
+async function saveAreas(a){await sSet('ov_areas',a);}
+async function getSchedaFields(){return(await sGet('ov_sfields'))||DEF_SCHEDA_FIELDS;}
+async function saveSchedaFields(f){await sSet('ov_sfields',f);}
+
+async function getCD(cid){
+  const d=await sGet('ov_cd_'+cid);
+  if(d){
+    if(!d.objectives) d.objectives=[];
+    if(!d.pei) d.pei={intro:'',strengths:'',difficulties:'',strategies:'',note_coord:'',objectives:[]};
+    if(!d.pei.objectives) d.pei.objectives=[];
+    if(!d.scheda) d.scheda={};
+    if(!d.assessments) d.assessments={};
+    return d;
+  }
+  return {assessments:{},scheda:{},pei:{intro:'',strengths:'',difficulties:'',strategies:'',note_coord:'',objectives:[]},objectives:[]};
+}
+async function saveCD(cid,d){
+  syncShow('saving');
+  await sSet('ov_cd_'+cid,d);
+  syncShow('ok');
+}
+function syncShow(s){
+  const el=document.getElementById('syncInd');if(!el)return;
+  el.textContent=s==='saving'?'⏳ Salvataggio...':'☁️ Sincronizzato';
+}
+
+/* ═══════════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════════ */
+async function doLogin(){
+  const code=document.getElementById('codeIn').value.trim().toUpperCase();
+  const pw=document.getElementById('pwIn').value.trim();
+  const errEl=document.getElementById('loginErr');
+  errEl.classList.add('hidden');
+  if(!code||!pw){showErr('Inserisci codice e password.');return;}
+  const correctPw=await getPassword();
+  if(pw!==correctPw){showErr('Password errata.');return;}
+  const users=await getUsers();
+  const u=users.find(x=>x.id===code);
+  if(!u){showErr('Codice operatore non riconosciuto.');return;}
+  S.user=u;S.role=u.role;
+  document.getElementById('loginWrap').style.display='none';
+  const mw=document.getElementById('mainWrap');
+  mw.classList.remove('hidden');mw.style.display='flex';
+  document.getElementById('roleChip').textContent=u.role==='coordinator'?'Coordinatore':'Educatore';
+  document.getElementById('roleChip').className='chip '+(u.role==='coordinator'?'chip-coord':'chip-edu');
+  document.getElementById('userNameTop').textContent=u.name;
+  document.getElementById('codeIn').value='';
+  document.getElementById('pwIn').value='';
+  go('sel');
+}
+function showErr(msg){
+  const el=document.getElementById('loginErr');
+  el.textContent=msg;el.classList.remove('hidden');
+}
+function doLogout(){
+  S={user:null,role:null,client:null,page:'sel'};
+  chartInst.forEach(c=>{try{c.destroy();}catch(e){}});
+  chartInst=[];pendingScores={};openForms={};
+  document.getElementById('mainWrap').classList.add('hidden');
+  document.getElementById('loginWrap').style.display='flex';
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════ */
+function go(page){
+  if(!S.user)return;
+  const noClient=['sel','admin'];
+  if(!noClient.includes(page)&&!S.client){alert('Seleziona prima un utente dalla sezione "Seleziona".');return;}
+  S.page=page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('n-'+page);if(el)el.classList.add('active');
+  chartInst.forEach(c=>{try{c.destroy();}catch(e){}});chartInst=[];
+  pendingScores={};openForms={};
+  loadPage(page);
+}
+async function loadPage(p){
+  const c=document.getElementById('content');
+  c.innerHTML='<div style="padding:2rem;text-align:center"><span class="spinner"></span> Caricamento...</div>';
+  try{
+    let html='';
+    if(p==='sel') html=await pgSel();
+    else if(p==='scheda') html=await pgScheda();
+    else if(p==='admin') html=await pgAdmin();
+    else if(p==='val') html=await pgVal();
+    else if(p==='pei') html=await pgPEI();
+    else if(p==='obj') html=await pgObj();
+    else if(p==='and') html=await pgAnd();
+    c.innerHTML=html;
+    if(p==='and') setTimeout(drawCharts,120);
+  }catch(e){
+    c.innerHTML='<div style="padding:1rem;color:#A32D2D;font-size:12px">Errore: '+e.message+'</div>';
+    console.error(e);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: SELEZIONA UTENTE
+═══════════════════════════════════════════════════════ */
+async function pgSel(){
+  const clients=await getClients();
+  let h='<div class="pg-title"><i class="ti ti-users" aria-hidden="true"></i> Seleziona utente</div>';
+  if(!clients.length) return h+'<div class="empty">Nessun utente. Aggiungili in Gestione.</div>';
+  clients.forEach(cl=>{
+    const sel=S.client&&S.client.id===cl.id;
+    const ini=cl.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    h+=`<button class="user-btn${sel?' sel':''}" onclick="chooseClient('${cl.id}')">
+      <div class="avatar">${ini}</div>
+      <div style="text-align:left">
+        <div style="font-size:13px;font-weight:500">${x(cl.name)}</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">${x(cl.diagnosis||'—')} · ${x(cl.birth||'—')}</div>
+      </div>
+      <i class="ti ${sel?'ti-circle-check':'ti-chevron-right'}" style="margin-left:auto;color:${sel?'#1D9E75':'var(--color-text-tertiary)'}" aria-hidden="true"></i>
+    </button>`;
+  });
+  if(S.client) h+='<button class="btn-p" style="margin-top:6px" onclick="go(\\'val\\')"><i class="ti ti-arrow-right" aria-hidden="true"></i> Vai alla valutazione</button>';
+  return h;
+}
+async function chooseClient(id){
+  const clients=await getClients();
+  S.client=clients.find(c=>c.id===id)||null;
+  go('sel');
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: SCHEDA UTENTE
+═══════════════════════════════════════════════════════ */
+async function pgScheda(){
+  const cd=await getCD(S.client.id);
+  const fields=await getSchedaFields();
+  const scheda=cd.scheda||{};
+  const isCoord=S.role==='coordinator';
+
+  let h=`<div class="pg-title"><i class="ti ti-id-badge" aria-hidden="true"></i> Scheda — ${x(S.client.name)}</div>`;
+
+  h+=`<div class="card">
+    <div class="card-hd"><div class="card-hd-l"><i class="ti ti-info-circle" aria-hidden="true"></i> Dati principali</div></div>
+    <div class="field-row">
+      <div class="f"><label>Nome e cognome</label><input type="text" id="sc_name" value="${xv(S.client.name)}" onchange="saveSchedaBase()" /></div>
+      <div class="f"><label>Anno di nascita</label><input type="text" id="sc_birth" value="${xv(S.client.birth||'')}" onchange="saveSchedaBase()" /></div>
+    </div>
+    <div class="field-row">
+      <div class="f full"><label>Diagnosi</label><input type="text" id="sc_diagnosis" value="${xv(S.client.diagnosis||'')}" onchange="saveSchedaBase()" /></div>
+    </div>
+  </div>`;
+
+  h+=`<div class="card">
+    <div class="card-hd">
+      <div class="card-hd-l"><i class="ti ti-address-book" aria-hidden="true"></i> Contatti e riferimenti</div>
+      ${isCoord?'<button class="btn" onclick="toggleForm(\\'addField\\')"><i class="ti ti-plus" aria-hidden="true"></i> Campo</button>':''}
+    </div>`;
+  if(isCoord) h+=formAddField();
+  fields.forEach((f,fi)=>{
+    const val=scheda[f.id]||'';
+    h+=`<div class="extra-field-row">
+      <span style="width:180px;flex-shrink:0;font-size:12px;font-weight:500;color:var(--color-text-secondary)">${x(f.label)}</span>
+      <input type="text" value="${xv(val)}" onchange="saveSchedaFieldVal('${f.id}',this.value)" style="flex:1" />
+      ${isCoord?`<button class="btn-red" onclick="delSchedaField(${fi})"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
+    </div>`;
+  });
+  h+='</div>';
+
+  const att=scheda['attivita']||{};
+  const giorni=['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  const fasce=['Mattino','Pomeriggio','Sera'];
+  h+=`<div class="card">
+    <div class="card-hd"><div class="card-hd-l"><i class="ti ti-calendar" aria-hidden="true"></i> Strutturazione attività settimanali</div></div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <tr><th style="padding:5px 7px;text-align:left;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)">Fascia</th>`;
+  giorni.forEach(g=>{h+=`<th style="padding:5px 7px;text-align:center;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);min-width:60px">${g}</th>`;});
+  h+='</tr>';
+  fasce.forEach(fa=>{
+    h+=`<tr><td style="padding:5px 7px;font-weight:500;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)">${fa}</td>`;
+    giorni.forEach(g=>{
+      const v=(att[fa]||{})[g]||'';
+      h+=`<td style="border:0.5px solid var(--color-border-tertiary);padding:2px">
+        <input type="text" value="${xv(v)}" onchange="saveAttivita('${fa}','${g}',this.value)" style="width:100%;border:none;background:transparent;padding:4px 5px;font-size:11px" />
+      </td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</table></div></div>';
+
+  h+=`<div class="card">
+    <div class="card-hd"><div class="card-hd-l"><i class="ti ti-notes" aria-hidden="true"></i> Note aggiuntive</div></div>
+    <textarea onchange="saveSchedaNota(this.value)">${x(scheda['note_scheda']||'')}</textarea>
+  </div>`;
+
+  return h;
+}
+function formAddField(){
+  const open=openForms['addField'];
+  return `<div id="form_addField" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuovo campo scheda</div>
+    <input type="text" id="newFieldLabel" placeholder="Nome campo (es. Tutore legale, Psichiatra...)" />
+    <div style="display:flex;gap:6px;margin-top:7px">
+      <button class="btn-p" onclick="confirmAddField()"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('addField')">Annulla</button>
+    </div>
+  </div>`;
+}
+function toggleForm(key){
+  openForms[key]=!openForms[key];
+  const el=document.getElementById('form_'+key);
+  if(el) el.classList.toggle('hidden');
+  else go(S.page);
+}
+async function saveSchedaBase(){
+  const name=document.getElementById('sc_name')?.value||S.client.name;
+  const birth=document.getElementById('sc_birth')?.value||S.client.birth;
+  const diagnosis=document.getElementById('sc_diagnosis')?.value||S.client.diagnosis;
+  const clients=await getClients();
+  const i=clients.findIndex(c=>c.id===S.client.id);
+  if(i<0)return;
+  clients[i]={...clients[i],name,birth,diagnosis};
+  S.client=clients[i];
+  await saveClients(clients);
+}
+async function saveSchedaFieldVal(fieldId,value){
+  const cd=await getCD(S.client.id);
+  cd.scheda[fieldId]=value;
+  await saveCD(S.client.id,cd);
+}
+async function saveAttivita(fascia,giorno,value){
+  const cd=await getCD(S.client.id);
+  if(!cd.scheda.attivita) cd.scheda.attivita={};
+  if(!cd.scheda.attivita[fascia]) cd.scheda.attivita[fascia]={};
+  cd.scheda.attivita[fascia][giorno]=value;
+  await saveCD(S.client.id,cd);
+}
+async function saveSchedaNota(value){
+  const cd=await getCD(S.client.id);
+  cd.scheda['note_scheda']=value;
+  await saveCD(S.client.id,cd);
+}
+async function confirmAddField(){
+  const label=(document.getElementById('newFieldLabel')?.value||'').trim();
+  if(!label){alert('Inserisci un nome per il campo.');return;}
+  const fields=await getSchedaFields();
+  fields.push({id:'ef_'+Date.now(),label});
+  await saveSchedaFields(fields);
+  openForms['addField']=false;
+  go('scheda');
+}
+async function delSchedaField(fi){
+  const fields=await getSchedaFields();
+  fields.splice(fi,1);
+  await saveSchedaFields(fields);go('scheda');
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: GESTIONE
+═══════════════════════════════════════════════════════ */
+async function pgAdmin(){
+  const users=await getUsers();
+  const clients=await getClients();
+  const areas=await getAreas();
+  const isCoord=S.role==='coordinator';
+  const pw=await getPassword();
+
+  let h='<div class="pg-title"><i class="ti ti-settings" aria-hidden="true"></i> Gestione piattaforma</div>';
+
+  if(isCoord){
+    h+=`<div class="card">
+      <div class="card-hd"><div class="card-hd-l"><i class="ti ti-lock" aria-hidden="true"></i> Password condivisa del team</div></div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px"><label style="font-size:11px;font-weight:600;color:var(--color-text-secondary);display:block;margin-bottom:4px">Password</label>
+          <input type="text" id="newPw" value="${xv(pw)}" /></div>
+        <button class="btn-p" onclick="changePassword()"><i class="ti ti-check" aria-hidden="true"></i> Salva</button>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:6px">Tutti gli operatori usano questa stessa password.</div>
+    </div>`;
+  }
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l"><i class="ti ti-users" aria-hidden="true"></i> Operatori</div></div>';
+  users.forEach((u,i)=>{
+    h+=`<div class="admin-row">
+      <div style="flex:1">
+        <span style="font-weight:500">${x(u.name)}</span>
+        <span class="chip ${u.role==='coordinator'?'chip-coord':'chip-edu'}" style="margin-left:6px">${x(u.id)}</span>
+        <span style="font-size:11px;color:var(--color-text-secondary);margin-left:4px">${u.role==='coordinator'?'Coordinatore':'Educatore'}</span>
+        ${u.id===S.user.id?'<span style="font-size:11px;color:var(--color-text-tertiary)"> (tu)</span>':''}
+      </div>
+      ${isCoord&&u.id!==S.user.id?`<button class="btn-red" onclick="toggleForm('delUser${i}')"><i class="ti ti-trash" aria-hidden="true"></i> Elimina</button>`:''}
+    </div>
+    ${isCoord&&u.id!==S.user.id?confirmBox('delUser'+i,'Eliminare l\\'operatore "'+u.name+'"?','deleteUser('+i+')'):''}`;
+  });
+  if(isCoord){
+    h+=`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:12px;font-weight:600;margin-bottom:7px;color:var(--color-text-secondary)">Aggiungi operatore</div>
+      <div class="field-row">
+        <div class="f"><label>Codice (es. EDU003)</label><input type="text" id="nu_id" /></div>
+        <div class="f"><label>Nome e cognome</label><input type="text" id="nu_name" /></div>
+        <div class="f"><label>Ruolo</label><select id="nu_role"><option value="educator">Educatore</option><option value="coordinator">Coordinatore</option></select></div>
+      </div>
+      <button class="btn-p" onclick="addUser()"><i class="ti ti-plus" aria-hidden="true"></i> Aggiungi operatore</button>
+    </div>`;
+  }
+  h+='</div>';
+
+  h+=`<div class="card">
+    <div class="card-hd">
+      <div class="card-hd-l"><i class="ti ti-user-circle" aria-hidden="true"></i> Utenti seguiti</div>
+      ${isCoord?'<button class="btn" onclick="toggleForm(\\'addClient\\')"><i class="ti ti-plus" aria-hidden="true"></i> Aggiungi</button>':''}
+    </div>`;
+  if(isCoord) h+=formAddClient();
+  clients.forEach((cl,i)=>{
+    h+=`<div class="admin-row">
+      <div style="flex:1">
+        <span style="font-weight:500">${x(cl.name)}</span>
+        <span style="font-size:11px;color:var(--color-text-secondary);display:block">${x(cl.diagnosis||'—')} · ${x(cl.birth||'—')}</span>
+      </div>
+      ${isCoord?`<button class="btn-red" onclick="toggleForm('delClient${i}')"><i class="ti ti-trash" aria-hidden="true"></i> Elimina</button>`:''}
+    </div>
+    ${isCoord?confirmBox('delClient'+i,'Eliminare "'+cl.name+'" e TUTTI i suoi dati? Operazione non reversibile.','deleteClient('+i+')'):''}`;
+  });
+  h+='</div>';
+
+  h+=`<div class="card">
+    <div class="card-hd">
+      <div class="card-hd-l"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Aree e competenze di valutazione</div>
+      ${isCoord?'<button class="btn" onclick="toggleForm(\\'addArea\\')"><i class="ti ti-plus" aria-hidden="true"></i> Nuova area</button>':''}
+    </div>`;
+  if(isCoord) h+=formAddArea();
+  areas.forEach((area,ai)=>{
+    h+=`<div class="area-block">
+      <div class="area-hd">
+        <span style="font-size:12px;font-weight:500">${area.icon||'📋'} ${x(area.label)}</span>
+        ${isCoord?`<div style="display:flex;gap:3px;flex-wrap:wrap">
+          <button class="btn" onclick="toggleForm('addItem${ai}')"><i class="ti ti-plus" aria-hidden="true"></i> Competenza</button>
+          <button class="btn-red" onclick="toggleForm('delArea${ai}')"><i class="ti ti-trash" aria-hidden="true"></i> Area</button>
+        </div>`:''}
+      </div>
+      ${isCoord?confirmBox('delArea'+ai,'Eliminare l\\'area "'+area.label+'" e tutte le sue competenze?','deleteArea('+ai+')'):''}
+      ${isCoord?formAddItem(ai):''}`;
+    (area.items||[]).forEach((item,ii)=>{
+      h+=`<div style="padding:3px 0;font-size:12px;border-top:0.5px solid var(--color-border-tertiary)">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="flex:1;color:var(--color-text-secondary)">${x(item.label)}</span>
+          ${isCoord?`<button class="btn-red" style="padding:2px 7px" onclick="toggleForm('delItem${ai}_${ii}')"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
+        </div>
+        ${isCoord?confirmBox('delItem'+ai+'_'+ii,'Eliminare "'+item.label+'"?','deleteItem('+ai+','+ii+')'):''}
+      </div>`;
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function confirmBox(key,msg,actionCall){
+  const open=openForms[key];
+  return `<div id="form_${key}" class="confirm-box ${open?'':'hidden'}">
+    <div>${msg}</div>
+    <div class="row-btns">
+      <button class="btn-red" onclick="${actionCall}">Sì, elimina</button>
+      <button class="btn" onclick="toggleForm('${key}')">Annulla</button>
+    </div>
+  </div>`;
+}
+function formAddClient(){
+  const open=openForms['addClient'];
+  return `<div id="form_addClient" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuovo utente seguito</div>
+    <div class="field-row">
+      <div class="f"><label>Nome e cognome</label><input type="text" id="nc_name" /></div>
+      <div class="f"><label>Anno di nascita</label><input type="text" id="nc_birth" /></div>
+      <div class="f full"><label>Diagnosi</label><input type="text" id="nc_diag" /></div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-p" onclick="confirmAddClient()"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('addClient')">Annulla</button>
+    </div>
+  </div>`;
+}
+function formAddArea(){
+  const open=openForms['addArea'];
+  return `<div id="form_addArea" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuova area di valutazione</div>
+    <div class="field-row">
+      <div class="f"><label>Nome area</label><input type="text" id="na_label" placeholder="es. Spesa, Tempo libero..." /></div>
+      <div class="f"><label>Icona (emoji, opzionale)</label><input type="text" id="na_icon" placeholder="es. 🛒" /></div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-p" onclick="confirmAddArea()"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('addArea')">Annulla</button>
+    </div>
+  </div>`;
+}
+function formAddItem(ai){
+  const key='addItem'+ai;
+  const open=openForms[key];
+  return `<div id="form_${key}" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuova competenza</div>
+    <input type="text" id="ni_label_${ai}" placeholder="Descrizione della competenza..." />
+    <div style="display:flex;gap:6px;margin-top:7px">
+      <button class="btn-p" onclick="confirmAddItem(${ai})"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('${key}')">Annulla</button>
+    </div>
+  </div>`;
+}
+
+async function changePassword(){
+  const np=(document.getElementById('newPw')?.value||'').trim();
+  if(!np||np.length<4){alert('Password troppo corta (min 4 caratteri).');return;}
+  await sSet('ov_password',np);
+  alert('Password aggiornata. Comunicala al team.');
+}
+async function addUser(){
+  const id=(document.getElementById('nu_id')?.value||'').trim().toUpperCase();
+  const name=(document.getElementById('nu_name')?.value||'').trim();
+  const role=document.getElementById('nu_role')?.value||'educator';
+  if(!id||!name){alert('Inserisci codice e nome.');return;}
+  const users=await getUsers();
+  if(users.find(u=>u.id===id)){alert('Codice già esistente.');return;}
+  users.push({id,name,role});
+  await saveUsers(users);go('admin');
+}
+async function deleteUser(i){
+  const users=await getUsers();
+  users.splice(i,1);await saveUsers(users);go('admin');
+}
+async function confirmAddClient(){
+  const name=(document.getElementById('nc_name')?.value||'').trim();
+  if(!name){alert('Inserisci almeno il nome.');return;}
+  const birth=(document.getElementById('nc_birth')?.value||'').trim();
+  const diag=(document.getElementById('nc_diag')?.value||'').trim();
+  const clients=await getClients();
+  clients.push({id:'cl_'+Date.now(),name,birth,diagnosis:diag});
+  await saveClients(clients);
+  openForms['addClient']=false;
+  go('admin');
+}
+async function deleteClient(i){
+  const clients=await getClients();
+  const id=clients[i].id;
+  clients.splice(i,1);await saveClients(clients);
+  await sDel('ov_cd_'+id);
+  if(S.client&&S.client.id===id) S.client=null;
+  go('admin');
+}
+async function confirmAddArea(){
+  const label=(document.getElementById('na_label')?.value||'').trim();
+  if(!label){alert("Inserisci un nome per l'area.");return;}
+  const icon=(document.getElementById('na_icon')?.value||'').trim()||'📋';
+  const areas=await getAreas();
+  areas.push({id:'ar_'+Date.now(),label,icon,items:[]});
+  await saveAreas(areas);
+  openForms['addArea']=false;
+  go('admin');
+}
+async function deleteArea(ai){
+  const areas=await getAreas();
+  areas.splice(ai,1);await saveAreas(areas);go('admin');
+}
+async function confirmAddItem(ai){
+  const label=(document.getElementById('ni_label_'+ai)?.value||'').trim();
+  if(!label){alert('Inserisci una descrizione.');return;}
+  const areas=await getAreas();
+  if(!areas[ai].items) areas[ai].items=[];
+  areas[ai].items.push({id:'it_'+Date.now(),label});
+  await saveAreas(areas);
+  openForms['addItem'+ai]=false;
+  go('admin');
+}
+async function deleteItem(ai,ii){
+  const areas=await getAreas();
+  areas[ai].items.splice(ii,1);await saveAreas(areas);go('admin');
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: VALUTAZIONE
+═══════════════════════════════════════════════════════ */
+async function pgVal(){
+  const areas=await getAreas();
+  const cd=await getCD(S.client.id);
+  const isCoord=S.role==='coordinator';
+
+  let h=`<div class="pg-title"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Valutazione — ${x(S.client.name)}</div>`;
+  h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;align-items:center">';
+  h+='<span style="font-size:11px;font-weight:600;color:var(--color-text-secondary)">Scala: </span>';
+  for(let s=1;s<=5;s++){
+    h+=`<span class="sbt a${s}" style="cursor:default;width:auto;padding:0 8px">${s} — ${SD[s]}</span>`;
+  }
+  h+='</div>';
+  if(isCoord) h+='<div class="info-box"><i class="ti ti-eye" aria-hidden="true"></i> Modalità lettura: solo gli educatori possono modificare i punteggi.</div>';
+
+  areas.forEach(area=>{
+    h+=`<div class="card"><div class="card-hd"><div class="card-hd-l">${area.icon||'📋'} ${x(area.label)}</div></div>`;
+    if(!area.items||!area.items.length){
+      h+='<div style="font-size:12px;color:var(--color-text-tertiary)">Nessuna competenza in questa area.</div>';
+    } else {
+      area.items.forEach(item=>{
+        const cur=cd.assessments[item.id]||{score:null,history:[]};
+        const sc=cur.score;
+        const hist=cur.history||[];
+        const last=hist.slice(-1)[0];
+        const prev=hist.length>1?hist[hist.length-2]:null;
+        const iid=String(item.id).replace(/[^a-zA-Z0-9_]/g,'');
+        h+=`<div class="item-row">
+          <div class="item-lbl">${x(item.label)}</div>
+          <div>
+            <div class="sbt-wrap">`;
+        for(let s=1;s<=5;s++){
+          if(isCoord){
+            h+=`<button class="sbt${sc===s?' a'+s:''}" disabled>${s}</button>`;
+          } else {
+            h+=`<button class="sbt${sc===s?' a'+s:''}" data-iid="${iid}" data-score="${s}" onclick="scoreClick(this)">${s}</button>`;
+          }
+        }
+        h+='</div>';
+        h+=`<div class="score-hist" id="hist_${iid}">`;
+        if(last) h+=`${last.date}${prev?` · <span class="hist-up">da ${prev.score} a ${last.score}</span>`:` · <span class="hist-up">${last.score}</span>`}`;
+        h+='</div></div></div>';
+      });
+    }
+    h+='</div>';
+  });
+  return h;
+}
+async function scoreClick(btn){
+  const iid=btn.getAttribute('data-iid');
+  const score=parseInt(btn.getAttribute('data-score'),10);
+  if(!iid||!score)return;
+  const wrap=btn.closest('.sbt-wrap');
+  if(wrap) wrap.querySelectorAll('.sbt').forEach((b)=>{
+    const bs=parseInt(b.getAttribute('data-score'),10);
+    b.className='sbt'+(bs===score?' a'+bs:'');
+  });
+  const cd=await getCD(S.client.id);
+  if(!cd.assessments[iid]) cd.assessments[iid]={score:null,history:[]};
+  const prev=cd.assessments[iid].score;
+  cd.assessments[iid].score=score;
+  cd.assessments[iid].history.push({score,prev,date:todayStr(),user:S.user.id});
+  await saveCD(S.client.id,cd);
+  const hEl=document.getElementById('hist_'+iid);
+  if(hEl) hEl.innerHTML=`${todayStr()}${prev?` · <span class="hist-up">da ${prev} a ${score}</span>`:` · <span class="hist-up">${score}</span>`}`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: PEI
+═══════════════════════════════════════════════════════ */
+async function pgPEI(){
+  const cd=await getCD(S.client.id);
+  const pei=cd.pei;
+  const isCoord=S.role==='coordinator';
+
+  let h=`<div class="pg-title"><i class="ti ti-file-description" aria-hidden="true"></i> PEI — ${x(S.client.name)}</div>`;
+  h+=`<div class="card">
+    <div class="card-hd"><div class="card-hd-l"><i class="ti ti-user" aria-hidden="true"></i> Profilo funzionale</div></div>
+    <div class="pei-sect"><label>Profilo funzionale / diagnosi</label>
+      <textarea onchange="savePEIf('intro',this.value)">${x(pei.intro||'')}</textarea></div>
+    <div class="pei-sect"><label>Punti di forza</label>
+      <textarea onchange="savePEIf('strengths',this.value)">${x(pei.strengths||'')}</textarea></div>
+    <div class="pei-sect"><label>Aree di difficoltà</label>
+      <textarea onchange="savePEIf('difficulties',this.value)">${x(pei.difficulties||'')}</textarea></div>
+    <div class="pei-sect"><label>Strategie e metodologie</label>
+      <textarea onchange="savePEIf('strategies',this.value)">${x(pei.strategies||'')}</textarea></div>
+  </div>`;
+
+  const objs=pei.objectives||[];
+  h+=`<div class="card">
+    <div class="card-hd">
+      <div class="card-hd-l"><i class="ti ti-target" aria-hidden="true"></i> Obiettivi del PEI</div>
+      <button class="btn" onclick="toggleForm('addPeiObj')"><i class="ti ti-plus" aria-hidden="true"></i> Aggiungi obiettivo</button>
+    </div>
+    ${formAddPeiObj()}`;
+  if(!objs.length){
+    h+='<div class="empty" style="padding:1rem">Nessun obiettivo. Clicca "Aggiungi obiettivo" qui sopra.</div>';
+  } else {
+    objs.forEach((obj,oi)=>{
+      h+=`<div class="pei-obj">
+        <div class="pei-obj-hd">
+          <span style="font-size:12px;font-weight:600">${x(obj.title||'Obiettivo '+(oi+1))}</span>
+          <button class="btn-red" onclick="toggleForm('delPeiObj${oi}')"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>
+        ${confirmBox('delPeiObj'+oi,'Eliminare l\\'obiettivo PEI "'+obj.title+'"?','deletePEIObj('+oi+')')}
+        <div class="pei-sect" style="margin-bottom:6px"><label>Descrizione</label>
+          <textarea onchange="savePEIObjField(${oi},'content',this.value)">${x(obj.content||'')}</textarea>
+        </div>`;
+      if(isCoord){
+        h+=`<div class="pei-sect"><label style="color:#185FA5"><i class="ti ti-message-2" aria-hidden="true"></i> Nota coordinatore</label>
+          <textarea onchange="savePEIObjField(${oi},'coordNote',this.value)" style="border-color:#B5D4F4">${x(obj.coordNote||'')}</textarea>
+        </div>`;
+      } else if(obj.coordNote){
+        h+=`<div class="info-box"><i class="ti ti-message-2" aria-hidden="true"></i> <strong>Coordinatore:</strong> ${x(obj.coordNote)}</div>`;
+      }
+      h+='</div>';
+    });
+  }
+  h+='</div>';
+
+  if(isCoord){
+    h+=`<div class="card">
+      <div class="card-hd"><div class="card-hd-l" style="color:#185FA5"><i class="ti ti-message-2" aria-hidden="true"></i> Note generali coordinatore</div></div>
+      <textarea onchange="savePEIf('note_coord',this.value)" style="border-color:#B5D4F4">${x(pei.note_coord||'')}</textarea>
+    </div>`;
+  } else if(pei.note_coord){
+    h+=`<div class="card" style="border-color:#B5D4F4">
+      <div style="font-size:11px;font-weight:600;color:#185FA5;margin-bottom:5px"><i class="ti ti-message-2" aria-hidden="true"></i> Note del coordinatore</div>
+      <div style="font-size:13px">${x(pei.note_coord)}</div>
+    </div>`;
+  }
+  return h;
+}
+function formAddPeiObj(){
+  const open=openForms['addPeiObj'];
+  return `<div id="form_addPeiObj" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuovo obiettivo PEI</div>
+    <input type="text" id="peiObjTitle" placeholder="Titolo obiettivo (es. Gestione autonoma della doccia)" />
+    <div style="display:flex;gap:6px;margin-top:7px">
+      <button class="btn-p" onclick="confirmAddPeiObj()"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('addPeiObj')">Annulla</button>
+    </div>
+  </div>`;
+}
+async function savePEIf(field,value){
+  const cd=await getCD(S.client.id);
+  cd.pei[field]=value;
+  await saveCD(S.client.id,cd);
+}
+async function savePEIObjField(oi,field,value){
+  const cd=await getCD(S.client.id);
+  if(!cd.pei.objectives[oi])return;
+  cd.pei.objectives[oi][field]=value;
+  await saveCD(S.client.id,cd);
+}
+async function confirmAddPeiObj(){
+  const title=(document.getElementById('peiObjTitle')?.value||'').trim();
+  if(!title){alert('Inserisci un titolo.');return;}
+  const cd=await getCD(S.client.id);
+  cd.pei.objectives.push({title,content:'',coordNote:''});
+  await saveCD(S.client.id,cd);
+  openForms['addPeiObj']=false;
+  go('pei');
+}
+async function deletePEIObj(oi){
+  const cd=await getCD(S.client.id);
+  cd.pei.objectives.splice(oi,1);
+  await saveCD(S.client.id,cd);go('pei');
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: OBIETTIVI OPERATIVI
+═══════════════════════════════════════════════════════ */
+async function pgObj(){
+  const cd=await getCD(S.client.id);
+  const objs=cd.objectives||[];
+  const isCoord=S.role==='coordinator';
+
+  let h=`<div class="pg-title"><i class="ti ti-target" aria-hidden="true"></i> Obiettivi operativi — ${x(S.client.name)}</div>`;
+  if(!isCoord){
+    h+='<button class="btn" style="margin-bottom:10px" onclick="toggleForm(\\'addObj\\')"><i class="ti ti-plus" aria-hidden="true"></i> Nuovo obiettivo</button>';
+    h+=formAddObj();
+  }
+  if(!objs.length){
+    h+='<div class="empty"><i class="ti ti-target" style="font-size:28px;display:block;margin-bottom:6px" aria-hidden="true"></i>';
+    h+=isCoord?'Nessun obiettivo inserito dagli educatori.':'Nessun obiettivo. Usa il tasto qui sopra per aggiungerne uno.';
+    h+='</div>';
+  }
+
+  objs.forEach((obj,oi)=>{
+    const objE=obj.entries||[];
+    const objAvg=objE.length?+(objE.reduce((a,e)=>a+e.score,0)/objE.length).toFixed(1):null;
+
+    h+=`<div class="obj-block">
+      <div class="obj-hd">
+        <div>
+          <div class="obj-title">${x(obj.title)}</div>
+          <div style="font-size:11px;color:var(--color-text-tertiary)">Dal ${obj.created}${objAvg!==null?' · media obiettivo: <strong>'+objAvg+'</strong>':''}</div>
+        </div>
+        <div class="obj-actions">
+          ${!isCoord?`
+          <button class="btn" onclick="toggleForm('addSub${oi}')"><i class="ti ti-plus" aria-hidden="true"></i> Sotto-ob.</button>
+          <button class="btn" onclick="togglePanel('objEP_${oi}')"><i class="ti ti-calendar-plus" aria-hidden="true"></i> Punteggio</button>
+          <button class="btn-red" onclick="toggleForm('delObj${oi}')"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
+        </div>
+      </div>
+      ${!isCoord?confirmBox('delObj'+oi,'Eliminare l\\'obiettivo "'+obj.title+'" e tutti i suoi dati?','deleteObjective('+oi+')'):''}
+      ${!isCoord?formAddSub(oi):''}
+      ${obj.description?`<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">${x(obj.description)}</div>`:''}
+
+      <div id="objEP_${oi}" class="hidden entry-panel">
+        <div style="font-size:12px;font-weight:600;margin-bottom:5px">Punteggio obiettivo — ${todayStr()}</div>
+        <div class="mini-scores">`;
+    for(let s=1;s<=5;s++){
+      h+=`<button class="msb" data-key="oE${oi}" data-s="${s}" onclick="pickScore(this)">${s} — ${SL[s]}</button>`;
+    }
+    h+=`</div>
+        <textarea id="oC_${oi}" placeholder="Commento (opzionale)"></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn-p" onclick="saveObjEntry(${oi})"><i class="ti ti-check" aria-hidden="true"></i> Salva</button>
+          <button class="btn" onclick="togglePanel('objEP_${oi}')">Annulla</button>
+        </div>
+      </div>`;
+
+    objE.slice(-3).reverse().forEach(e=>{ h+=entryHtml(e); });
+    if(isCoord&&objE.length){
+      h+=`<div style="margin-top:5px">
+        <textarea id="ocC_${oi}" placeholder="Commento coordinatore sull'obiettivo..." style="font-size:12px;min-height:40px"></textarea>
+        <button class="btn" style="margin-top:4px" onclick="saveObjCoordC(${oi})"><i class="ti ti-send" aria-hidden="true"></i> Invia</button>
+      </div>`;
+    }
+
+    (obj.subObjectives||[]).forEach((sub,si)=>{
+      const subE=sub.entries||[];
+      const subAvg=subE.length?+(subE.reduce((a,e)=>a+e.score,0)/subE.length).toFixed(1):null;
+      const lastSE=subE.slice(-1)[0];
+      h+=`<div class="sub-row">
+        <div class="sub-top">
+          <span style="color:var(--color-text-tertiary);font-size:13px">→</span>
+          <span class="sub-lbl">${x(sub.label)}</span>
+          ${lastSE?`<span class="sbt a${lastSE.score}" style="cursor:default;width:auto;padding:1px 8px;display:inline-flex;font-size:11px">${lastSE.score} ${SL[lastSE.score]}</span>`:''}
+          ${subAvg!==null?`<span style="font-size:10px;color:var(--color-text-tertiary)">m.${subAvg}</span>`:''}
+          ${!isCoord?`
+          <button class="btn" style="padding:3px 7px" onclick="togglePanel('subEP_${oi}_${si}')"><i class="ti ti-plus" aria-hidden="true"></i></button>
+          <button class="btn-red" onclick="toggleForm('delSub${oi}_${si}')"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
+        </div>
+        ${!isCoord?confirmBox('delSub'+oi+'_'+si,'Eliminare il sotto-obiettivo "'+sub.label+'"?','deleteSubObj('+oi+','+si+')'):''}
+        <div id="subEP_${oi}_${si}" class="hidden entry-panel">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px">Punteggio — ${todayStr()}</div>
+          <div class="mini-scores">`;
+      for(let s=1;s<=5;s++){
+        h+=`<button class="msb" data-key="sE${oi}_${si}" data-s="${s}" onclick="pickScore(this)">${s} — ${SL[s]}</button>`;
+      }
+      h+=`</div>
+          <textarea id="sC_${oi}_${si}" placeholder="Commento (opzionale)"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="btn-p" onclick="saveSubEntry(${oi},${si})"><i class="ti ti-check" aria-hidden="true"></i> Salva</button>
+            <button class="btn" onclick="togglePanel('subEP_${oi}_${si}')">Annulla</button>
+          </div>
+        </div>
+        <div class="entry-list">`;
+      subE.slice(-3).reverse().forEach(e=>{ h+=entryHtml(e); });
+      if(isCoord&&subE.length){
+        h+=`<div>
+          <textarea id="scC_${oi}_${si}" placeholder="Commento coordinatore..." style="font-size:11px;min-height:36px;margin-top:4px"></textarea>
+          <button class="btn" style="margin-top:3px;font-size:11px;padding:3px 8px" onclick="saveSubCoordC(${oi},${si})"><i class="ti ti-send" aria-hidden="true"></i> Commenta</button>
+        </div>`;
+      }
+      h+='</div></div>';
+    });
+
+    if(obj.coordFeedback){
+      h+=`<div class="info-box" style="margin-top:7px"><i class="ti ti-message-2" aria-hidden="true"></i> <strong>Feedback coordinatore:</strong> ${x(obj.coordFeedback)}</div>`;
+    }
+    if(isCoord){
+      h+=`<div style="margin-top:7px">
+        <textarea id="oFb_${oi}" placeholder="Feedback coordinatore su questo obiettivo..." style="font-size:12px">${x(obj.coordFeedback||'')}</textarea>
+        <button class="btn" style="margin-top:4px" onclick="saveObjFeedback(${oi})"><i class="ti ti-send" aria-hidden="true"></i> Salva feedback</button>
+      </div>`;
+    }
+    h+='</div>';
+  });
+  return h;
+}
+function formAddObj(){
+  const open=openForms['addObj'];
+  return `<div id="form_addObj" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuovo obiettivo operativo</div>
+    <div class="field-row">
+      <div class="f full"><label>Titolo</label><input type="text" id="newObjTitle" placeholder="es. Farsi la doccia autonomamente" /></div>
+      <div class="f full"><label>Descrizione (opzionale)</label><input type="text" id="newObjDesc" placeholder="Breve descrizione..." /></div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-p" onclick="confirmAddObj()"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('addObj')">Annulla</button>
+    </div>
+  </div>`;
+}
+function formAddSub(oi){
+  const key='addSub'+oi;
+  const open=openForms[key];
+  return `<div id="form_${key}" class="inline-form ${open?'':'hidden'}">
+    <div class="inline-form-title">Nuovo sotto-obiettivo</div>
+    <input type="text" id="newSubLabel_${oi}" placeholder="es. Aprire il rubinetto alla temperatura giusta" />
+    <div style="display:flex;gap:6px;margin-top:7px">
+      <button class="btn-p" onclick="confirmAddSub(${oi})"><i class="ti ti-check" aria-hidden="true"></i> Aggiungi</button>
+      <button class="btn" onclick="toggleForm('${key}')">Annulla</button>
+    </div>
+  </div>`;
+}
+function entryHtml(e){
+  return `<div class="eitem">
+    <div class="emeta">${e.date} · ${x(e.userName||e.user)}</div>
+    <span class="sbt a${e.score}" style="cursor:default;width:auto;padding:1px 8px;display:inline-flex;font-size:11px">${e.score} ${SL[e.score]}</span>
+    ${e.comment?`<div style="color:var(--color-text-secondary);margin-top:2px">${x(e.comment)}</div>`:''}
+    ${e.coordComment?`<div class="ecoord"><i class="ti ti-message-2" aria-hidden="true"></i> ${x(e.coordComment)}</div>`:''}
+  </div>`;
+}
+function togglePanel(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('hidden');
+}
+function pickScore(btn){
+  const key=btn.getAttribute('data-key');
+  const s=parseInt(btn.getAttribute('data-s'),10);
+  pendingScores[key]=s;
+  document.querySelectorAll('.msb[data-key="'+key+'"]').forEach(b=>{
+    b.classList.toggle('sel',parseInt(b.getAttribute('data-s'),10)===s);
+  });
+}
+async function confirmAddObj(){
+  const title=(document.getElementById('newObjTitle')?.value||'').trim();
+  if(!title){alert("Inserisci un titolo per l'obiettivo.");return;}
+  const desc=(document.getElementById('newObjDesc')?.value||'').trim();
+  const cd=await getCD(S.client.id);
+  cd.objectives.push({title,description:desc,created:todayStr(),entries:[],subObjectives:[],coordFeedback:''});
+  await saveCD(S.client.id,cd);
+  openForms['addObj']=false;
+  go('obj');
+}
+async function confirmAddSub(oi){
+  const label=(document.getElementById('newSubLabel_'+oi)?.value||'').trim();
+  if(!label){alert('Inserisci una descrizione per il sotto-obiettivo.');return;}
+  const cd=await getCD(S.client.id);
+  if(!cd.objectives[oi].subObjectives) cd.objectives[oi].subObjectives=[];
+  cd.objectives[oi].subObjectives.push({label,entries:[]});
+  await saveCD(S.client.id,cd);
+  openForms['addSub'+oi]=false;
+  go('obj');
+}
+async function saveObjEntry(oi){
+  const score=pendingScores['oE'+oi];
+  if(!score){alert('Seleziona un punteggio prima di salvare.');return;}
+  const comment=document.getElementById('oC_'+oi)?.value||'';
+  const cd=await getCD(S.client.id);
+  if(!cd.objectives[oi].entries) cd.objectives[oi].entries=[];
+  cd.objectives[oi].entries.push({score,comment,date:todayStr(),user:S.user.id,userName:S.user.name});
+  delete pendingScores['oE'+oi];
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function saveSubEntry(oi,si){
+  const score=pendingScores['sE'+oi+'_'+si];
+  if(!score){alert('Seleziona un punteggio prima di salvare.');return;}
+  const comment=document.getElementById('sC_'+oi+'_'+si)?.value||'';
+  const cd=await getCD(S.client.id);
+  if(!cd.objectives[oi].subObjectives[si].entries) cd.objectives[oi].subObjectives[si].entries=[];
+  cd.objectives[oi].subObjectives[si].entries.push({score,comment,date:todayStr(),user:S.user.id,userName:S.user.name});
+  delete pendingScores['sE'+oi+'_'+si];
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function saveObjCoordC(oi){
+  const c=document.getElementById('ocC_'+oi)?.value||'';if(!c)return;
+  const cd=await getCD(S.client.id);
+  const entries=cd.objectives[oi].entries||[];
+  if(entries.length) entries[entries.length-1].coordComment=c;
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function saveSubCoordC(oi,si){
+  const c=document.getElementById('scC_'+oi+'_'+si)?.value||'';if(!c)return;
+  const cd=await getCD(S.client.id);
+  const entries=cd.objectives[oi].subObjectives[si].entries||[];
+  if(entries.length) entries[entries.length-1].coordComment=c;
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function saveObjFeedback(oi){
+  const fb=document.getElementById('oFb_'+oi)?.value||'';
+  const cd=await getCD(S.client.id);
+  cd.objectives[oi].coordFeedback=fb;
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function deleteObjective(oi){
+  const cd=await getCD(S.client.id);
+  cd.objectives.splice(oi,1);
+  await saveCD(S.client.id,cd);go('obj');
+}
+async function deleteSubObj(oi,si){
+  const cd=await getCD(S.client.id);
+  cd.objectives[oi].subObjectives.splice(si,1);
+  await saveCD(S.client.id,cd);go('obj');
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: ANDAMENTO
+═══════════════════════════════════════════════════════ */
+async function pgAnd(){
+  const cd=await getCD(S.client.id);
+  const objs=cd.objectives||[];
+  let h=`<div class="pg-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Andamento — ${x(S.client.name)}</div>`;
+  if(!objs.length){
+    h+='<div class="empty"><i class="ti ti-chart-line" style="font-size:28px;display:block;margin-bottom:6px" aria-hidden="true"></i>Nessun obiettivo inserito.</div>';
+    return h;
+  }
+  objs.forEach((obj,oi)=>{
+    const allE=[...(obj.entries||[]),...(obj.subObjectives||[]).flatMap(s=>s.entries||[])];
+    const allDates=[...new Set(allE.map(e=>e.date))].sort((a,b)=>dSort(a)-dSort(b));
+    h+=`<div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">🎯 ${x(obj.title)}</div>`;
+    if(!allDates.length){
+      h+='<div style="font-size:12px;color:var(--color-text-tertiary)">Nessun dato inserito.</div>';
+    } else {
+      h+=`<div class="chart-wrap"><canvas id="ch_${oi}" role="img" aria-label="Andamento ${x(obj.title)}"></canvas></div>`;
+      (obj.subObjectives||[]).forEach((sub,si)=>{
+        const last=(sub.entries||[]).slice(-1)[0];
+        h+=`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-top:0.5px solid var(--color-border-tertiary)">
+          <span style="flex:1;color:var(--color-text-secondary)">${x(sub.label)}</span>
+          ${last?`<span class="sbt a${last.score}" style="cursor:default;width:auto;padding:1px 8px;display:inline-flex;font-size:11px">${last.score} ${SL[last.score]}</span>`:'<span style="color:var(--color-text-tertiary);font-size:11px">—</span>'}
+        </div>`;
+      });
+    }
+    h+='</div>';
+  });
+  return h;
+}
+async function drawCharts(){
+  const cd=await getCD(S.client.id);
+  (cd.objectives||[]).forEach((obj,oi)=>{
+    const canvas=document.getElementById('ch_'+oi);if(!canvas)return;
+    const allE=[...(obj.entries||[]),...(obj.subObjectives||[]).flatMap(s=>s.entries||[])];
+    const allDates=[...new Set(allE.map(e=>e.date))].sort((a,b)=>dSort(a)-dSort(b));
+    if(!allDates.length)return;
+    const datasets=[];
+    const objE=obj.entries||[];
+    if(objE.length){
+      datasets.push({label:'Obiettivo generale',
+        data:allDates.map(d=>{const e=objE.filter(v=>v.date===d);return e.length?+(e.reduce((a,v)=>a+v.score,0)/e.length).toFixed(2):null;}),
+        borderColor:CC[0],backgroundColor:CC[0]+'33',tension:.3,spanGaps:true,pointRadius:4,borderWidth:2});
+    }
+    (obj.subObjectives||[]).forEach((sub,si)=>{
+      const sE=sub.entries||[];if(!sE.length)return;
+      const lbl=sub.label.length>30?sub.label.substring(0,30)+'…':sub.label;
+      datasets.push({label:lbl,
+        data:allDates.map(d=>{const e=sE.filter(v=>v.date===d);return e.length?+(e.reduce((a,v)=>a+v.score,0)/e.length).toFixed(2):null;}),
+        borderColor:CC[(si+1)%CC.length],backgroundColor:CC[(si+1)%CC.length]+'22',
+        tension:.3,spanGaps:true,pointRadius:3,borderWidth:1.5});
+    });
+    if(!datasets.length)return;
+    const chart=new Chart(canvas,{type:'line',data:{labels:allDates,datasets},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{
+          y:{min:0.5,max:5.5,ticks:{stepSize:1,callback:v=>Number.isInteger(v)?(v+' ('+SL[v]+')'):''},grid:{color:'rgba(128,128,128,0.08)'}},
+          x:{ticks:{maxRotation:45,autoSkip:true,maxTicksLimit:12},grid:{color:'rgba(128,128,128,0.08)'}}
+        },
+        plugins:{legend:{display:datasets.length>1,position:'bottom',labels:{font:{size:11},boxWidth:10,padding:8}}}}});
+    chartInst.push(chart);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════ */
+function x(s){
+  if(s===null||s===undefined)return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function xv(s){return x(s).replace(/'/g,'&#39;');}
+function todayStr(){return new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function dSort(s){const p=(s||'').split('/');if(p.length!==3)return 0;return new Date(p[2],p[1]-1,p[0]).getTime();}
+</script>
