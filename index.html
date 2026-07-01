@@ -157,7 +157,7 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
   <div class="fl"><label>Codice operatore</label><input type="text" id="codeIn" placeholder="es. EDU001" onkeydown="if(event.key==='Enter')document.getElementById('pwIn').focus()" /></div>
   <div class="fl"><label>Password</label><input type="password" id="pwIn" placeholder="Password condivisa del team" onkeydown="if(event.key==='Enter')doLogin()" /></div>
   <button class="btn-p full" onclick="doLogin()">Accedi</button>
-  <div class="hint">Demo: <strong>EDU001</strong> o <strong>EDU002</strong> · <strong>COORD01</strong> (Chiara Dantone)<br>Password: <strong>oravado2024</strong></div>
+  <div class="hint">Codici: <strong>EDU01</strong>, <strong>EDU02</strong>, <strong>EDU03</strong> · <strong>COORD01</strong> (Chiara Dantone)<br>Password condivisa del team</div>
 </div>
 </div>
 </div>
@@ -273,21 +273,19 @@ const DEF_USERS=[
   {id:'EDU03',name:'Daniela Sartorelli',role:'educator'}
 ];
 const DEF_CLIENTS=[
-  {id:'pietro',name:'Pietro Verdi',birth:'2001',diagnosis:'ASD livello 2'},
-  {id:'sara',name:'Sara Conti',birth:'1999',diagnosis:'Disabilità intellettiva lieve'}
+  {id:'cl_1782287663036',name:'Anis Harrabi',birth:'18/10/2002',diagnosis:''},
+  {id:'cl_1782305461982',name:'Monir Chellaf',birth:'20/12/2006',diagnosis:''},
+  {id:'cl_1782305478682',name:'Francesca Tiboni',birth:'21/09/1992',diagnosis:''},
+  {id:'cl_1782305700722',name:'Oskar Fresch',birth:'16/05/1978',diagnosis:'Sindrome di Down'},
+  {id:'cl_1782307210326',name:'Andrea Degli Esposti',birth:'05.09.1992',diagnosis:'Sindrome di Down'},
+  {id:'cl_1782307973561',name:'Matteo Brighenti',birth:'18.03.1995',diagnosis:'Spettro autismo'},
+  {id:'cl_1782308446528',name:'Cristian Beltramolli',birth:'20.05.2003',diagnosis:'Sindrome di Down'},
+  {id:'cl_1782309106659',name:'Davide Rigatti',birth:'06.03.1991',diagnosis:''},
+  {id:'cl_1782309755268',name:'Ennio Buompadre',birth:'20.11.1997',diagnosis:''}
 ];
 const DEF_AREAS=[
   {id:'igiene',label:'Igiene personale e cura di sé',icon:'💧',items:[
-    {id:'a1',label:'Comunica il bisogno di usare il bagno'},
-    {id:'a2',label:'Svolge tutti i passaggi in bagno correttamente'},
-    {id:'a3',label:'Sa lavarsi mani e viso'},
-    {id:'a4',label:'Si fa la doccia/bagno autonomamente'},
-    {id:'a5',label:'Usa correttamente l\'asciugacapelli'},
-    {id:'a6',label:'Segue la sequenza completa del lavaggio corpo'},
-    {id:'a7',label:'Si lava i denti'},
-    {id:'a8',label:'Sa pettinarsi'},
-    {id:'a9',label:'Si prende cura della propria pelle'},
-    {id:'a10',label:'Sa tenersi pulito durante la giornata'}
+    {id:'it_1782467181366',label:'Si lava mani e viso'}
   ]},
   {id:'vestiario',label:'Vestiario e cura degli abiti',icon:'👕',items:[
     {id:'b1',label:'Si veste e si sveste autonomamente'},
@@ -363,7 +361,9 @@ const DEF_SCHEDA_FIELDS=[
   {id:'terapia_farm',label:'Terapia farmacologica'},
   {id:'terapia_psico',label:'Terapia psicologica'},
   {id:'altre_terapie',label:'Altre terapie / riabilitazione'},
-  {id:'note',label:'Note generali'}
+  {id:'note',label:'Note generali'},
+  {id:'ef_1782307702145',label:'Educatore di riferimento'},
+  {id:'ef_1782307784927',label:'Data inserimento e tipologia servizio'}
 ];
 
 /* ══════════════════════════════════════════════════════
