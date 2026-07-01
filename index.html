@@ -192,10 +192,21 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
 </div>
 
 <!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import Chart from "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/+esm";
+<script>
+// Dynamic imports loaded at startup
+let initializeApp, getDatabase, ref, set, get, Chart;
+
+async function loadDeps() {
+  const fbApp = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+  const fbDb = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+  const chartJs = await import("https://cdn.jsdelivr.net/npm/chart.js@4.4.1/+esm");
+  initializeApp = fbApp.initializeApp;
+  getDatabase = fbDb.getDatabase;
+  ref = fbDb.ref;
+  set = fbDb.set;
+  get = fbDb.get;
+  Chart = chartJs.default;
+}
 
 /* ══════════════════════════════════════════════════════
    🔧 INCOLLA QUI LA TUA firebaseConfig
@@ -1013,6 +1024,16 @@ if(typeof saveSubCoordC!=="undefined") window.saveSubCoordC=saveSubCoordC;
 if(typeof saveObjFeedback!=="undefined") window.saveObjFeedback=saveObjFeedback;
 if(typeof deleteObjective!=="undefined") window.deleteObjective=deleteObjective;
 if(typeof deleteSubObj!=="undefined") window.deleteSubObj=deleteSubObj;
+
+// Start the app
+initFirebase().then(() => {
+  console.log("Firebase initialized successfully");
+}).catch(e => {
+  console.error("Firebase init failed:", e);
+  const el = document.getElementById('firebaseErr');
+  if(el) el.classList.remove('hidden');
+});
+
 </script>
 </body>
 </html>
