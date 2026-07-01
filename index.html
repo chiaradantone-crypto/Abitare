@@ -988,52 +988,44 @@ async function drawCharts(){
 
 
 // Expose all functions to HTML onclick handlers
-if(typeof doLogin!=="undefined") window.doLogin=doLogin;
-if(typeof doLogout!=="undefined") window.doLogout=doLogout;
-if(typeof go!=="undefined") window.go=go;
-if(typeof toggleForm!=="undefined") window.toggleForm=toggleForm;
-if(typeof togglePanel!=="undefined") window.togglePanel=togglePanel;
-if(typeof pickScore!=="undefined") window.pickScore=pickScore;
-if(typeof chooseClient!=="undefined") window.chooseClient=chooseClient;
-if(typeof scoreClick!=="undefined") window.scoreClick=scoreClick;
-if(typeof saveSchedaBase!=="undefined") window.saveSchedaBase=saveSchedaBase;
-if(typeof saveSchedaFieldVal!=="undefined") window.saveSchedaFieldVal=saveSchedaFieldVal;
-if(typeof saveAttivita!=="undefined") window.saveAttivita=saveAttivita;
-if(typeof saveSchedaNota!=="undefined") window.saveSchedaNota=saveSchedaNota;
-if(typeof confirmAddField!=="undefined") window.confirmAddField=confirmAddField;
-if(typeof delSchedaField!=="undefined") window.delSchedaField=delSchedaField;
-if(typeof changePassword!=="undefined") window.changePassword=changePassword;
-if(typeof changeUsersPw!=="undefined") window.changeUsersPw=changeUsersPw;
-if(typeof addUser!=="undefined") window.addUser=addUser;
-if(typeof deleteUser!=="undefined") window.deleteUser=deleteUser;
-if(typeof confirmAddClient!=="undefined") window.confirmAddClient=confirmAddClient;
-if(typeof deleteClient!=="undefined") window.deleteClient=deleteClient;
-if(typeof confirmAddArea!=="undefined") window.confirmAddArea=confirmAddArea;
-if(typeof deleteArea!=="undefined") window.deleteArea=deleteArea;
-if(typeof confirmAddItem!=="undefined") window.confirmAddItem=confirmAddItem;
-if(typeof deleteItem!=="undefined") window.deleteItem=deleteItem;
-if(typeof savePEIf!=="undefined") window.savePEIf=savePEIf;
-if(typeof savePEIObjField!=="undefined") window.savePEIObjField=savePEIObjField;
-if(typeof confirmAddPeiObj!=="undefined") window.confirmAddPeiObj=confirmAddPeiObj;
-if(typeof deletePEIObj!=="undefined") window.deletePEIObj=deletePEIObj;
-if(typeof confirmAddObj!=="undefined") window.confirmAddObj=confirmAddObj;
-if(typeof confirmAddSub!=="undefined") window.confirmAddSub=confirmAddSub;
-if(typeof saveObjEntry!=="undefined") window.saveObjEntry=saveObjEntry;
-if(typeof saveSubEntry!=="undefined") window.saveSubEntry=saveSubEntry;
-if(typeof saveObjCoordC!=="undefined") window.saveObjCoordC=saveObjCoordC;
-if(typeof saveSubCoordC!=="undefined") window.saveSubCoordC=saveSubCoordC;
-if(typeof saveObjFeedback!=="undefined") window.saveObjFeedback=saveObjFeedback;
-if(typeof deleteObjective!=="undefined") window.deleteObjective=deleteObjective;
-if(typeof deleteSubObj!=="undefined") window.deleteSubObj=deleteSubObj;
+window.doLogin=doLogin;
+window.doLogout=doLogout;
+window.go=go;
+window.toggleForm=toggleForm;
+window.togglePanel=togglePanel;
+window.pickScore=pickScore;
+window.chooseClient=chooseClient;
+window.scoreClick=scoreClick;
+window.saveSchedaBase=saveSchedaBase;
+window.saveSchedaFieldVal=saveSchedaFieldVal;
+window.saveAttivita=saveAttivita;
+window.saveSchedaNota=saveSchedaNota;
+window.confirmAddField=confirmAddField;
+window.delSchedaField=delSchedaField;
+window.changePassword=changePassword;
+window.changeUsersPw=changeUsersPw;
+window.addUser=addUser;
+window.deleteUser=deleteUser;
+window.confirmAddClient=confirmAddClient;
+window.deleteClient=deleteClient;
+window.confirmAddArea=confirmAddArea;
+window.deleteArea=deleteArea;
+window.confirmAddItem=confirmAddItem;
+window.deleteItem=deleteItem;
+window.savePEIf=savePEIf;
+window.savePEIObjField=savePEIObjField;
+window.confirmAddPeiObj=confirmAddPeiObj;
+window.deletePEIObj=deletePEIObj;
+window.confirmAddObj=confirmAddObj;
+window.confirmAddSub=confirmAddSub;
+window.saveObjEntry=saveObjEntry;
+window.saveSubEntry=saveSubEntry;
+window.saveObjCoordC=saveObjCoordC;
+window.saveSubCoordC=saveSubCoordC;
+window.saveObjFeedback=saveObjFeedback;
+window.deleteObjective=deleteObjective;
+window.deleteSubObj=deleteSubObj;
 
-// Start the app
-initFirebase().then(() => {
-  console.log("Firebase initialized successfully");
-}).catch(e => {
-  console.error("Firebase init failed:", e);
-  const el = document.getElementById('firebaseErr');
-  if(el) el.classList.remove('hidden');
-});
 
 </script>
 </body>
