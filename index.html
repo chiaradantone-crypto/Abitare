@@ -3,20 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ORA VADO</title>
+<title>ELIODORO — Gestione Servizi</title>
 
 <!-- ══════════════════════════════════════════
   ISTRUZIONI SETUP FIREBASE
   ══════════════════════════════════════════
-  1. Vai su https://console.firebase.google.com
-  2. Clicca "Aggiungi progetto" → nome es. "ora-vado" → continua
-  3. Disabilita Google Analytics (non serve) → crea progetto
-  4. Nel menu a sinistra: "Realtime Database" → "Crea database"
-     → scegli regione (eur3 - europe-west) → modalità TEST → abilita
-  5. In alto clicca ⚙️ → "Impostazioni progetto"
-  6. Scorri a "Le tue app" → clicca </> (web)
-  7. Registra app (nome es. "ora-vado-web") → NON serve Firebase Hosting
-  8. Copia i valori di firebaseConfig e incollali qui sotto
+  Il progetto Firebase è già configurato (stesso progetto "abitare-79092"
+  già in uso). Alla prima apertura l'app migra automaticamente i dati
+  esistenti dell'Area Abitare nella nuova struttura multi-laboratorio.
+  Non è necessario alcun intervento manuale.
   ══════════════════════════════════════════ -->
 
 <style>
@@ -48,11 +43,14 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
 .btn-red:hover{background:#FCEBEB}
 
 .app-shell{display:flex;flex-direction:column;height:100vh}
-.topbar{background:#fff;border-bottom:1px solid #e8e8e5;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar{background:#fff;border-bottom:1px solid #e8e8e5;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:6px}
 .logo{font-size:16px;font-weight:600;color:#0F6E56}
 .chip{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
 .chip-edu{background:#E1F5EE;color:#0F6E56}
 .chip-coord{background:#E6F1FB;color:#185FA5}
+.chip-dir{background:#F3E8FF;color:#6B21A8}
+.chip-segr{background:#FFF4E0;color:#92600A}
+.chip-lab{background:#F0F0EC;color:#555}
 .sync{font-size:11px;color:#aaa;display:flex;align-items:center;gap:4px}
 
 .layout{display:flex;flex:1;overflow:hidden}
@@ -130,6 +128,17 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
 .confirm-box{background:#FCEBEB;border-radius:8px;padding:9px;margin-top:6px;font-size:12px;color:#A32D2D}
 .confirm-box .row-btns{display:flex;gap:6px;margin-top:6px}
 
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.lab-card{background:#fff;border:1px solid #e8e8e5;border-radius:14px;padding:14px;cursor:pointer;transition:transform .1s,box-shadow .1s}
+.lab-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
+.lab-card.locked{background:#fafaf9}
+.lab-icon{font-size:26px;margin-bottom:6px}
+.lab-name{font-size:13px;font-weight:600;color:#222;margin-bottom:2px}
+.lab-status{font-size:11px;color:#aaa;display:flex;align-items:center;gap:4px}
+.lab-status.open{color:#0F6E56}
+.labpw-form{margin-top:9px;background:#f5f5f3;border-radius:8px;padding:8px}
+.labpw-err{font-size:11px;color:#A32D2D;margin-top:5px}
+
 /* MOBILE */
 @media(max-width:600px){
   .sidebar{width:52px}
@@ -139,6 +148,7 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
   .content{padding:10px}
   .sbt-wrap{gap:1px}
   .sbt{width:26px;height:24px;font-size:10px}
+  .lab-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -149,15 +159,15 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
 <div class="login-wrap">
 <div class="login-card">
   <div class="brand">
-    <div class="brand-name">🌿 ORA VADO</div>
-    <div class="brand-sub">Piattaforma educativa condivisa</div>
+    <div class="brand-name">🌿 ELIODORO</div>
+    <div class="brand-sub">Gestione servizi della cooperativa</div>
   </div>
   <div id="loginErr" class="err hidden"></div>
   <div id="firebaseErr" class="err hidden">⚠️ Firebase non configurato. Segui le istruzioni nel codice sorgente.</div>
-  <div class="fl"><label>Codice operatore</label><input type="text" id="codeIn" placeholder="es. EDU001" onkeydown="if(event.key==='Enter')document.getElementById('pwIn').focus()" /></div>
+  <div class="fl"><label>Codice operatore</label><input type="text" id="codeIn" placeholder="es. EDU01" onkeydown="if(event.key==='Enter')document.getElementById('pwIn').focus()" /></div>
   <div class="fl"><label>Password</label><input type="password" id="pwIn" placeholder="Password condivisa del team" onkeydown="if(event.key==='Enter')doLogin()" /></div>
-  <button class="btn-p full" onclick="doLogin()">Accedi</button>
-  <div class="hint">Codici: <strong>EDU01</strong>, <strong>EDU02</strong>, <strong>EDU03</strong> · <strong>COORD01</strong> (Chiara Dantone)<br>Password condivisa del team</div>
+  <button class="btn-p full" onclick="doLogin()" disabled>Connessione in corso...</button>
+  <div class="hint">Dopo l'accesso potrai scegliere il servizio/laboratorio<br>a cui vuoi lavorare.</div>
 </div>
 </div>
 </div>
@@ -165,97 +175,98 @@ select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;
 <!-- MAIN APP -->
 <div id="mainWrap" class="hidden app-shell">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:9px">
-      <span class="logo">🌿 ORA VADO</span>
+    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+      <span class="logo">🌿 ELIODORO</span>
       <span class="chip" id="roleChip"></span>
       <span style="font-size:12px;color:#888" id="userNameTop"></span>
+      <span class="chip chip-lab hidden" id="labChip"></span>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="sync" id="syncInd">☁️ Sincronizzato</span>
+      <button class="btn hidden" id="btnChangeLab" onclick="goLabSel()">🔄 Cambia servizio</button>
       <button class="btn" onclick="doLogout()" style="color:#A32D2D;border-color:#E24B4A">⏻ Esci</button>
     </div>
   </div>
   <div class="layout">
-    <div class="sidebar">
-      <div class="nav-sec">Utente</div>
-      <div class="nav-item" id="n-sel" onclick="go('sel')">👥 <span>Seleziona</span></div>
-      <div class="nav-item" id="n-scheda" onclick="go('scheda')">🪪 <span>Scheda</span></div>
-      <div class="nav-item" id="n-admin" onclick="go('admin')">⚙️ <span>Gestione</span></div>
-      <div class="nav-sec">Sezioni</div>
-      <div class="nav-item" id="n-val" onclick="go('val')">✅ <span>Valutazione</span></div>
-      <div class="nav-item" id="n-pei" onclick="go('pei')">📄 <span>PEI</span></div>
-      <div class="nav-item" id="n-obj" onclick="go('obj')">🎯 <span>Obiettivi</span></div>
-      <div class="nav-item" id="n-and" onclick="go('and')">📈 <span>Andamento</span></div>
-    </div>
+    <div class="sidebar" id="sidebar"></div>
     <div class="content" id="content"></div>
   </div>
 </div>
 
 <!-- Firebase SDK -->
 <script>
-// Dynamic imports loaded at startup
-let initializeApp, getDatabase, ref, set, get, Chart;
+let initializeApp, getDatabase, ref, set, get, Chart, getAuth, signInAnonymously;
 
 async function loadDeps() {
   const fbApp = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
   const fbDb = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+  const fbAuth = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
   const chartJs = await import("https://cdn.jsdelivr.net/npm/chart.js@4.4.1/+esm");
   initializeApp = fbApp.initializeApp;
   getDatabase = fbDb.getDatabase;
   ref = fbDb.ref;
   set = fbDb.set;
   get = fbDb.get;
+  getAuth = fbAuth.getAuth;
+  signInAnonymously = fbAuth.signInAnonymously;
   Chart = chartJs.default;
 }
 
 /* ══════════════════════════════════════════════════════
-   🔧 INCOLLA QUI LA TUA firebaseConfig
-   (da Firebase Console → Impostazioni progetto → Le tue app → </> )
+   🔧 firebaseConfig (stesso progetto già in uso)
 ══════════════════════════════════════════════════════ */
 const firebaseConfig = {
-  apiKey: "AIzaSyA8XRZT1F67QldzVA_pS0IjwqsgmJNcZYM",
-  authDomain: "abitare-79092.firebaseapp.com",
-  databaseURL: "https://abitare-79092-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "abitare-79092",
-  storageBucket: "abitare-79092.firebasestorage.app",
-  messagingSenderId: "966878856621",
-  appId: "1:966878856621:web:a3efab3f6530e4a4b94d24"
+  apiKey: "AIzaSyASvSPhw571Jg0EHseTuo9bMSbhnl2lVrk",
+  authDomain: "eliodoro-3b1bc.firebaseapp.com",
+  databaseURL: "https://eliodoro-3b1bc-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "eliodoro-3b1bc",
+  storageBucket: "eliodoro-3b1bc.firebasestorage.app",
+  messagingSenderId: "535973131978",
+  appId: "1:535973131978:web:a0693ca1094d9186672633"
 };
-/* ══════════════════════════════════════════════════════ */
 
-// Check se Firebase è configurato
 const isConfigured = !firebaseConfig.apiKey.includes('INSERISCI');
 if(!isConfigured){
   document.getElementById('firebaseErr').classList.remove('hidden');
 }
 
-let app, db;
-try {
-  app = initializeApp(firebaseConfig);
-  db = getDatabase(app);
-} catch(e) {
-  console.error('Firebase init error:', e);
-}
+let app, db, auth;
 
 /* ══════════════════════════════════════════════════════
-   STORAGE (Firebase Realtime Database)
+   STORAGE (Firebase Realtime Database) — root "eliodoro"
 ══════════════════════════════════════════════════════ */
+const ROOT='eliodoro';
 async function sGet(k){
   if(!db) return null;
   try{
-    const snap = await get(ref(db, 'oravado/'+k));
+    const snap = await get(ref(db, ROOT+'/'+k));
     return snap.exists() ? snap.val() : null;
   }catch(e){ console.error('sGet',k,e); return null; }
 }
 async function sSet(k,v){
   if(!db) return;
-  try{ await set(ref(db, 'oravado/'+k), v); }
+  try{ await set(ref(db, ROOT+'/'+k), v); }
   catch(e){ console.error('sSet',k,e); }
 }
 async function sDel(k){
   if(!db) return;
-  try{ await set(ref(db, 'oravado/'+k), null); }
+  try{ await set(ref(db, ROOT+'/'+k), null); }
   catch(e){}
+}
+// Accesso ai dati legacy (vecchio root "oravado", usato solo per la migrazione una tantum)
+async function oGet(k){
+  if(!db) return null;
+  try{
+    const snap = await get(ref(db, 'oravado/'+k));
+    return snap.exists() ? snap.val() : null;
+  }catch(e){ return null; }
+}
+async function oGetAll(){
+  if(!db) return null;
+  try{
+    const snap = await get(ref(db, 'oravado'));
+    return snap.exists() ? snap.val() : null;
+  }catch(e){ return null; }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -264,84 +275,22 @@ async function sDel(k){
 const SL={1:'NO',2:'AF',3:'AV/D',4:'Pres.',5:'SI'};
 const SD={1:'Non eseguito',2:'Supporto fisico',3:'Verbale/visivo',4:'Presente senza supporto',5:'Autonomia piena'};
 const CC=['#1D9E75','#185FA5','#854F0B','#A32D2D','#534AB7','#3B6D11','#D85A30','#D4537E'];
-const DEFAULT_PASSWORD='Abitare2026';
+const DEFAULT_TEAM_PASSWORD='Eliodoro2026';
+
+const ROLE_LABEL={direttore:'Direttore',coordinatore:'Coordinatrice',educatore:'Educatore',segreteria:'Segreteria'};
+const ROLE_CHIP_CLASS={direttore:'chip-dir',coordinatore:'chip-coord',educatore:'chip-edu',segreteria:'chip-segr'};
 
 const DEF_USERS=[
-  {id:'COORD01',name:'Chiara Dantone',role:'coordinator'},
-  {id:'EDU01',name:'Andrea Pucci',role:'educator'},
-  {id:'EDU02',name:'Lorenzo Tonolli',role:'educator'},
-  {id:'EDU03',name:'Daniela Sartorelli',role:'educator'}
+  {id:'DIR01',name:'Antonello Panetta',role:'direttore'},
+  {id:'COORD01',name:'Chiara Dantone',role:'coordinatore'},
+  {id:'COORD02',name:'Arianna Menegon',role:'coordinatore'},
+  {id:'COORD03',name:'Danila Carrara',role:'coordinatore'},
+  {id:'SEGR01',name:'Segreteria',role:'segreteria'},
+  {id:'EDU01',name:'Andrea Pucci',role:'educatore'},
+  {id:'EDU02',name:'Lorenzo Tonolli',role:'educatore'},
+  {id:'EDU03',name:'Daniela Sartorelli',role:'educatore'}
 ];
-const DEF_CLIENTS=[
-  {id:'cl_1782287663036',name:'Anis Harrabi',birth:'18/10/2002',diagnosis:''},
-  {id:'cl_1782305461982',name:'Monir Chellaf',birth:'20/12/2006',diagnosis:''},
-  {id:'cl_1782305478682',name:'Francesca Tiboni',birth:'21/09/1992',diagnosis:''},
-  {id:'cl_1782305700722',name:'Oskar Fresch',birth:'16/05/1978',diagnosis:'Sindrome di Down'},
-  {id:'cl_1782307210326',name:'Andrea Degli Esposti',birth:'05.09.1992',diagnosis:'Sindrome di Down'},
-  {id:'cl_1782307973561',name:'Matteo Brighenti',birth:'18.03.1995',diagnosis:'Spettro autismo'},
-  {id:'cl_1782308446528',name:'Cristian Beltramolli',birth:'20.05.2003',diagnosis:'Sindrome di Down'},
-  {id:'cl_1782309106659',name:'Davide Rigatti',birth:'06.03.1991',diagnosis:''},
-  {id:'cl_1782309755268',name:'Ennio Buompadre',birth:'20.11.1997',diagnosis:''}
-];
-const DEF_AREAS=[
-  {id:'igiene',label:'Igiene personale e cura di sé',icon:'💧',items:[
-    {id:'it_1782467181366',label:'Si lava mani e viso'}
-  ]},
-  {id:'vestiario',label:'Vestiario e cura degli abiti',icon:'👕',items:[
-    {id:'b1',label:'Si veste e si sveste autonomamente'},
-    {id:'b2',label:'Sa allacciarsi le scarpe'},
-    {id:'b3',label:'Ripone in ordine gli indumenti'},
-    {id:'b4',label:'Mantiene ordine in cassetti/armadio'},
-    {id:'b5',label:'Sceglie indumenti adeguati alla stagione'},
-    {id:'b6',label:'Discrimina sporco/pulito'},
-    {id:'b7',label:'Sa usare la lavatrice'},
-    {id:'b8',label:'Sa stendere i panni'}
-  ]},
-  {id:'cucina',label:'Alimentazione e cucina',icon:'🍳',items:[
-    {id:'c1',label:'Sa tagliare il cibo nel piatto'},
-    {id:'c2',label:'Sa preparare caffè/tè'},
-    {id:'c3',label:'Sa preparare pasti semplici'},
-    {id:'c4',label:'Usa fornelli/piastre'},
-    {id:'c5',label:'Sa usare forno/microonde'},
-    {id:'c6',label:'Apparecchia e sparecchia la tavola'},
-    {id:'c7',label:'Lava piatti / usa la lavastoviglie'},
-    {id:'c8',label:'Sa fare la lista della spesa'}
-  ]},
-  {id:'spesa',label:'Spesa e gestione alimentare',icon:'🛒',items:[
-    {id:'s1',label:'Verifica quanto già presente in dispensa'},
-    {id:'s2',label:'È consapevole delle scadenze degli alimenti'},
-    {id:'s3',label:'Sa pianificare cosa acquistare per la settimana'},
-    {id:'s4',label:'Sa orientarsi in un supermercato'},
-    {id:'s5',label:'Confronta prezzi e sceglie prodotti'},
-    {id:'s6',label:'Gestisce il budget per la spesa'}
-  ]},
-  {id:'casa',label:'Gestione domestica',icon:'🏠',items:[
-    {id:'d1',label:'Usa scopa e mop'},
-    {id:'d2',label:'Sa usare l\'aspirapolvere'},
-    {id:'d3',label:'Sa rifarsi il letto e cambiare le lenzuola'},
-    {id:'d4',label:'Gestisce la raccolta differenziata'},
-    {id:'d5',label:'Porta fuori l\'immondizia'},
-    {id:'d6',label:'Apre e chiude la porta a chiave'}
-  ]},
-  {id:'autonomia',label:'Autonomia esterna e denaro',icon:'🚶',items:[
-    {id:'e1',label:'Sa orientarsi in ambiente esterno'},
-    {id:'e2',label:'Si reca autonomamente ai negozi'},
-    {id:'e3',label:'Sa usare mezzi di trasporto pubblico'},
-    {id:'e4',label:'Mantiene comportamento adeguato in pubblico'},
-    {id:'e5',label:'Sa chiamare i soccorsi in emergenza'},
-    {id:'e6',label:'Sa effettuare un pagamento'},
-    {id:'e7',label:'Sa gestire un budget settimanale'}
-  ]},
-  {id:'sociale',label:'Comunicazione e relazioni',icon:'💬',items:[
-    {id:'f1',label:'Usa comunicazione verbale in modo efficace'},
-    {id:'f2',label:'Sa chiedere aiuto'},
-    {id:'f3',label:'Sa usare il telefono cellulare'},
-    {id:'f4',label:'Rispetta le regole sociali di base'},
-    {id:'f5',label:'Tollera frustrazioni e interruzioni'},
-    {id:'f6',label:'Accetta correzioni e le applica'},
-    {id:'f7',label:'Sa fare e mantenere amicizie'}
-  ]}
-];
+
 const DEF_SCHEDA_FIELDS=[
   {id:'residenza',label:'Residenza'},
   {id:'telefono',label:'Telefono'},
@@ -366,33 +315,261 @@ const DEF_SCHEDA_FIELDS=[
   {id:'ef_1782307784927',label:'Data inserimento e tipologia servizio'}
 ];
 
+// Item di valutazione dell'Area Abitare (dati già in uso, verranno comunque
+// sovrascritti dalla migrazione automatica dei dati reali già presenti su Firebase)
+const AREAS_ABITARE=[
+  {id:'igiene',label:'Igiene personale e cura di sé',icon:'💧',items:[{id:'a1',label:'Si lava mani e viso'}]},
+  {id:'vestiario',label:'Vestiario e cura degli abiti',icon:'👕',items:[
+    {id:'b1',label:'Si veste e si sveste autonomamente'},{id:'b2',label:'Sa allacciarsi le scarpe'},
+    {id:'b3',label:'Ripone in ordine gli indumenti'},{id:'b4',label:'Mantiene ordine in cassetti/armadio'},
+    {id:'b5',label:'Sceglie indumenti adeguati alla stagione'},{id:'b6',label:'Discrimina sporco/pulito'},
+    {id:'b7',label:'Sa usare la lavatrice'},{id:'b8',label:'Sa stendere i panni'}
+  ]},
+  {id:'cucina',label:'Alimentazione e cucina',icon:'🍳',items:[
+    {id:'c1',label:'Sa tagliare il cibo nel piatto'},{id:'c2',label:'Sa preparare caffè/tè'},
+    {id:'c3',label:'Sa preparare pasti semplici'},{id:'c4',label:'Usa fornelli/piastre'},
+    {id:'c5',label:'Sa usare forno/microonde'},{id:'c6',label:'Apparecchia e sparecchia la tavola'},
+    {id:'c7',label:'Lava piatti / usa la lavastoviglie'},{id:'c8',label:'Sa fare la lista della spesa'}
+  ]},
+  {id:'spesa',label:'Spesa e gestione alimentare',icon:'🛒',items:[
+    {id:'s1',label:'Verifica quanto già presente in dispensa'},{id:'s2',label:'È consapevole delle scadenze degli alimenti'},
+    {id:'s3',label:'Sa pianificare cosa acquistare per la settimana'},{id:'s4',label:'Sa orientarsi in un supermercato'},
+    {id:'s5',label:'Confronta prezzi e sceglie prodotti'},{id:'s6',label:'Gestisce il budget per la spesa'}
+  ]},
+  {id:'casa',label:'Gestione domestica',icon:'🏠',items:[
+    {id:'d1',label:'Usa scopa e mop'},{id:'d2',label:"Sa usare l'aspirapolvere"},
+    {id:'d3',label:'Sa rifarsi il letto e cambiare le lenzuola'},{id:'d4',label:'Gestisce la raccolta differenziata'},
+    {id:'d5',label:"Porta fuori l'immondizia"},{id:'d6',label:'Apre e chiude la porta a chiave'}
+  ]},
+  {id:'autonomia',label:'Autonomia esterna e denaro',icon:'🚶',items:[
+    {id:'e1',label:'Sa orientarsi in ambiente esterno'},{id:'e2',label:'Si reca autonomamente ai negozi'},
+    {id:'e3',label:'Sa usare mezzi di trasporto pubblico'},{id:'e4',label:'Mantiene comportamento adeguato in pubblico'},
+    {id:'e5',label:'Sa chiamare i soccorsi in emergenza'},{id:'e6',label:'Sa effettuare un pagamento'},
+    {id:'e7',label:'Sa gestire un budget settimanale'}
+  ]},
+  {id:'sociale',label:'Comunicazione e relazioni',icon:'💬',items:[
+    {id:'f1',label:'Usa comunicazione verbale in modo efficace'},{id:'f2',label:'Sa chiedere aiuto'},
+    {id:'f3',label:'Sa usare il telefono cellulare'},{id:'f4',label:'Rispetta le regole sociali di base'},
+    {id:'f5',label:'Tollera frustrazioni e interruzioni'},{id:'f6',label:'Accetta correzioni e le applica'},
+    {id:'f7',label:'Sa fare e mantenere amicizie'}
+  ]}
+];
+
+// Item di valutazione — Età evolutiva (domini legge 104/1992 e ICF: apprendimento,
+// comunicazione, relazioni e socializzazione, autonomia personale)
+const AREAS_ETA_EVOLUTIVA=[
+  {id:'apprendimento',label:'Apprendimento e applicazione delle conoscenze',icon:'📚',items:[
+    {id:'ee1',label:'Mantiene l\'attenzione su un compito proposto per un tempo adeguato'},
+    {id:'ee2',label:'Segue una consegna semplice data dall\'operatore'},
+    {id:'ee3',label:'Porta a termine un\'attività strutturata'},
+    {id:'ee4',label:'Riconosce lettere, numeri o simboli di base'},
+    {id:'ee5',label:'Usa in modo adeguato gli strumenti scolastici (matita, quaderno, forbici)'},
+    {id:'ee6',label:'Generalizza un apprendimento in contesti diversi da quello di insegnamento'}
+  ]},
+  {id:'comunicazione',label:'Comunicazione',icon:'💬',items:[
+    {id:'ec1',label:'Comprende consegne verbali semplici'},
+    {id:'ec2',label:'Usa parole o frasi per esprimere un bisogno'},
+    {id:'ec3',label:'Utilizza strumenti di comunicazione aumentativa (CAA), se previsti'},
+    {id:'ec4',label:'Risponde a domande semplici su di sé'},
+    {id:'ec5',label:'Racconta, con l\'aiuto dell\'adulto, un\'esperienza vissuta'}
+  ]},
+  {id:'relazioni',label:'Relazioni e socializzazione',icon:'🧑‍🤝‍🧑',items:[
+    {id:'er1',label:'Interagisce con i coetanei durante il gioco'},
+    {id:'er2',label:"Rispetta il proprio turno in un'attività di gruppo"},
+    {id:'er3',label:"Chiede di partecipare a un'attività proposta dal gruppo"},
+    {id:'er4',label:'Tollera la presenza di altri bambini negli spazi condivisi'},
+    {id:'er5',label:'Riconosce ed esprime le proprie emozioni'}
+  ]},
+  {id:'autonomia_pers',label:'Autonomia personale',icon:'🧴',items:[
+    {id:'ea1',label:'Mangia in autonomia'},
+    {id:'ea2',label:'Si lava le mani da solo'},
+    {id:'ea3',label:'Si veste con assistenza minima'},
+    {id:'ea4',label:'Segnala il bisogno di andare in bagno'},
+    {id:'ea5',label:'Si sposta autonomamente negli spazi conosciuti'}
+  ]}
+];
+
+// Percorsi per l'inclusione — Lab 1 (livello base: autonomia di base nel gruppo)
+const AREAS_INCLUSIONE_1=[
+  {id:'autonomia_base',label:'Autonomia di base nel laboratorio',icon:'🧭',items:[
+    {id:'i1a1',label:'Si orienta negli spazi del laboratorio'},
+    {id:'i1a2',label:"Rispetta i tempi dell'attività proposta"},
+    {id:'i1a3',label:"Porta a termine un compito semplice con il supporto dell'operatore"},
+    {id:'i1a4',label:'Gestisce i propri effetti personali (zaino, giacca, materiali)'}
+  ]},
+  {id:'gruppo_base',label:'Stare nel gruppo',icon:'🧑‍🤝‍🧑',items:[
+    {id:'i1g1',label:'Partecipa a un\'attività proposta al gruppo'},
+    {id:'i1g2',label:"Comunica un bisogno all'operatore"},
+    {id:'i1g3',label:'Rispetta le regole di base del laboratorio'},
+    {id:'i1g4',label:'Accetta la presenza di altri partecipanti nello stesso spazio'}
+  ]}
+];
+// Percorsi per l'inclusione — Lab 2 (livello intermedio: autonomia operativa)
+const AREAS_INCLUSIONE_2=[
+  {id:'autonomia_op',label:'Autonomia operativa',icon:'🧭',items:[
+    {id:'i2a1',label:'Segue una sequenza di 3-4 passaggi in un compito'},
+    {id:'i2a2',label:'Usa strumenti semplici in modo adeguato'},
+    {id:'i2a3',label:'Mantiene l\'attenzione su un compito per tutta la sua durata'},
+    {id:'i2a4',label:'Chiede aiuto quando ne ha bisogno'}
+  ]},
+  {id:'gruppo_int',label:'Comportamento nel gruppo',icon:'🧑‍🤝‍🧑',items:[
+    {id:'i2g1',label:'Collabora con un compagno in un compito condiviso'},
+    {id:'i2g2',label:'Gestisce piccole frustrazioni senza escalation'},
+    {id:'i2g3',label:'Rispetta il proprio turno di parola/azione'},
+    {id:'i2g4',label:"Accetta le correzioni dell'operatore"}
+  ]}
+];
+// Percorsi per l'inclusione — Lab 3 (livello avanzato: propedeutico al lavoro)
+const AREAS_INCLUSIONE_3=[
+  {id:'autonomia_avanz',label:'Autonomia avanzata',icon:'🧭',items:[
+    {id:'i3a1',label:'Pianifica in autonomia le fasi di un compito conosciuto'},
+    {id:'i3a2',label:'Lavora in autonomia per periodi prolungati'},
+    {id:'i3a3',label:'Riconosce e corregge un proprio errore'},
+    {id:'i3a4',label:'Rispetta le consegne nei tempi e nelle modalità richieste'}
+  ]},
+  {id:'trasversali',label:'Competenze trasversali',icon:'🌱',items:[
+    {id:'i3t1',label:'Collabora attivamente in un piccolo gruppo di lavoro'},
+    {id:'i3t2',label:'Comunica in modo adeguato con operatori e compagni'},
+    {id:'i3t3',label:'Gestisce materiali e strumenti in autonomia'},
+    {id:'i3t4',label:'Si propone spontaneamente per nuovi compiti'}
+  ]}
+];
+
+// Centro del Fare — laboratorio di cucito/sartoria orientato al mondo del lavoro
+const AREAS_CENTRO_FARE=[
+  {id:'strumenti',label:'Uso di strumenti e macchina da cucire',icon:'🧵',items:[
+    {id:'cf1',label:'Usa correttamente ago e filo per il cucito a mano'},
+    {id:'cf2',label:'Usa la macchina da cucire sotto supervisione'},
+    {id:'cf3',label:'Regola i comandi base della macchina (filo, piedino, pedale)'},
+    {id:'cf4',label:'Esegue un\'imbastitura'}
+  ]},
+  {id:'tecniche_sart',label:'Tecniche sartoriali',icon:'✂️',items:[
+    {id:'cf5',label:'Esegue il taglio di un orlo'},
+    {id:'cf6',label:'Cuce bottoni e asole'},
+    {id:'cf7',label:'Sostituisce o ripara una cerniera'},
+    {id:'cf8',label:'Esegue piccoli rammendi e riparazioni'},
+    {id:'cf9',label:'Segue un cartamodello semplice'}
+  ]},
+  {id:'organizzazione_fare',label:'Organizzazione e sicurezza',icon:'🗂️',items:[
+    {id:'cf10',label:'Cura e mantiene in ordine la propria postazione di lavoro'},
+    {id:'cf11',label:'Utilizza gli strumenti da taglio in sicurezza (forbici, spilli)'},
+    {id:'cf12',label:'Rispetta i tempi di consegna di un lavoro assegnato'},
+    {id:'cf13',label:'Segue le indicazioni per la qualità del prodotto finito'}
+  ]}
+];
+
+// Prerequisiti lavorativi — orientato al reale inserimento/mantenimento nel mondo del lavoro
+const AREAS_PREREQUISITI_LAVORATIVI=[
+  {id:'comportamento_lav',label:'Comportamento lavorativo',icon:'⏰',items:[
+    {id:'pl1',label:'Rispetta gli orari di ingresso e uscita'},
+    {id:'pl2',label:'Mantiene il ritmo di lavoro richiesto dalla mansione'},
+    {id:'pl3',label:'Porta a termine il compito assegnato'},
+    {id:'pl4',label:'Rispetta le pause programmate'}
+  ]},
+  {id:'produttivita',label:'Compito e produttività',icon:'📦',items:[
+    {id:'pl5',label:'Segue una sequenza di lavorazione predefinita'},
+    {id:'pl6',label:'Mantiene la qualità del lavoro nel tempo'},
+    {id:'pl7',label:'Lavora in autonomia su compiti ripetitivi'},
+    {id:'pl8',label:'Chiede supporto in modo adeguato quando è in difficoltà'}
+  ]},
+  {id:'relazioni_lav',label:'Relazioni sul lavoro',icon:'🤝',items:[
+    {id:'pl9',label:'Collabora con i colleghi nella stessa lavorazione'},
+    {id:'pl10',label:'Accetta le correzioni del responsabile'},
+    {id:'pl11',label:"Rispetta le regole dell'ambiente di lavoro"},
+    {id:'pl12',label:"Gestisce l'attesa e i cambi di attività"}
+  ]},
+  {id:'sicurezza_lav',label:"Sicurezza e cura dell'ambiente",icon:'🦺',items:[
+    {id:'pl13',label:'Usa i dispositivi di protezione individuale previsti dalla mansione'},
+    {id:'pl14',label:'Mantiene in ordine la propria postazione di lavoro'},
+    {id:'pl15',label:'Segnala anomalie o problemi riscontrati'}
+  ]}
+];
+
+const DEF_LABS=[
+  {id:'eta_evolutiva',name:'Età evolutiva',icon:'🧒',password:'Evolutiva2026',areasDefault:AREAS_ETA_EVOLUTIVA},
+  {id:'abitare',name:'Area Abitare',icon:'🏠',password:'Abitare2026',areasDefault:AREAS_ABITARE},
+  {id:'inclusione1',name:"Percorsi per l'inclusione — Lab 1",icon:'🧩',password:'Inclusione1-2026',areasDefault:AREAS_INCLUSIONE_1},
+  {id:'inclusione2',name:"Percorsi per l'inclusione — Lab 2",icon:'🧩',password:'Inclusione2-2026',areasDefault:AREAS_INCLUSIONE_2},
+  {id:'inclusione3',name:"Percorsi per l'inclusione — Lab 3",icon:'🧩',password:'Inclusione3-2026',areasDefault:AREAS_INCLUSIONE_3},
+  {id:'centro_fare',name:'Centro del Fare (cucito)',icon:'🧵',password:'CentroFare2026',areasDefault:AREAS_CENTRO_FARE},
+  {id:'prerequisiti_lavorativi',name:'Prerequisiti lavorativi',icon:'🛠️',password:'Prerequisiti2026',areasDefault:AREAS_PREREQUISITI_LAVORATIVI}
+];
+
 /* ══════════════════════════════════════════════════════
-   DATA ACCESS
+   MIGRAZIONE UNA TANTUM DATI LEGACY (vecchio root "oravado")
 ══════════════════════════════════════════════════════ */
-async function getPassword(){return(await sGet('password'))||DEFAULT_PASSWORD;}
-async function getUsers(){return(await sGet('users'))||DEF_USERS;}
+async function ensureMigrated(){
+  const existingLabs=await sGet('labs');
+  if(existingLabs) return; // già migrato
+  const old=await oGetAll();
+
+  // Utenti: unisce quelli storici (rinominando i ruoli) con il nuovo organico
+  let users=DEF_USERS.slice();
+  if(old && Array.isArray(old.users)){
+    old.users.forEach(u=>{
+      const role=u.role==='coordinator'?'coordinatore':(u.role==='educator'?'educatore':u.role);
+      if(!users.find(x=>x.id===u.id)) users.push({id:u.id,name:u.name,role});
+    });
+  }
+  await sSet('users',users);
+  await sSet('password',(old&&old.password)||DEFAULT_TEAM_PASSWORD);
+
+  // Laboratori: crea tutti i 7 servizi con password di default
+  const labs=DEF_LABS.map(l=>({id:l.id,name:l.name,icon:l.icon,password:l.password}));
+  await sSet('labs',labs);
+
+  // Dati per ciascun laboratorio
+  for(const l of DEF_LABS){
+    if(l.id==='abitare' && old){
+      await sSet('labdata/abitare/areas', old.areas||AREAS_ABITARE);
+      await sSet('labdata/abitare/clients', old.clients||[]);
+      await sSet('labdata/abitare/sfields', old.sfields||DEF_SCHEDA_FIELDS);
+      const clientList=old.clients||[];
+      for(const cl of clientList){
+        const cdKey='cd_'+cl.id;
+        if(old[cdKey]) await sSet('labdata/abitare/'+cdKey, old[cdKey]);
+      }
+    } else {
+      await sSet('labdata/'+l.id+'/areas', l.areasDefault);
+      await sSet('labdata/'+l.id+'/clients', []);
+      await sSet('labdata/'+l.id+'/sfields', DEF_SCHEDA_FIELDS);
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   DATA ACCESS — globali
+══════════════════════════════════════════════════════ */
+async function getPassword(){return (await sGet('password'))||DEFAULT_TEAM_PASSWORD;}
+async function getUsers(){return (await sGet('users'))||DEF_USERS;}
 async function saveUsers(u){await sSet('users',u);}
-async function getClients(){return(await sGet('clients'))||DEF_CLIENTS;}
-async function saveClients(c){await sSet('clients',c);}
-async function getAreas(){return(await sGet('areas'))||DEF_AREAS;}
-async function saveAreas(a){await sSet('areas',a);}
-async function getSchedaFields(){return(await sGet('sfields'))||DEF_SCHEDA_FIELDS;}
-async function saveSchedaFields(f){await sSet('sfields',f);}
+async function getLabs(){return (await sGet('labs'))||DEF_LABS.map(l=>({id:l.id,name:l.name,icon:l.icon,password:l.password}));}
+async function saveLabs(l){await sSet('labs',l);}
+
+/* DATA ACCESS — relativi al laboratorio corrente (S.lab.id) */
+async function getAreas(){return (await sGet('labdata/'+S.lab.id+'/areas'))||[];}
+async function saveAreas(a){await sSet('labdata/'+S.lab.id+'/areas',a);}
+async function getClients(){return (await sGet('labdata/'+S.lab.id+'/clients'))||[];}
+async function saveClients(c){await sSet('labdata/'+S.lab.id+'/clients',c);}
+async function getSchedaFields(){return (await sGet('labdata/'+S.lab.id+'/sfields'))||DEF_SCHEDA_FIELDS;}
+async function saveSchedaFields(f){await sSet('labdata/'+S.lab.id+'/sfields',f);}
 async function getCD(cid){
-  const d=await sGet('cd_'+cid);
+  const d=await sGet('labdata/'+S.lab.id+'/cd_'+cid);
   if(d){
     if(!d.objectives) d.objectives=[];
     if(!d.pei) d.pei={intro:'',strengths:'',difficulties:'',strategies:'',note_coord:'',objectives:[]};
     if(!d.pei.objectives) d.pei.objectives=[];
     if(!d.scheda) d.scheda={};
     if(!d.assessments) d.assessments={};
+    if(!d.comm) d.comm=[];
+    if(!d.verbali) d.verbali=[];
     return d;
   }
-  return {assessments:{},scheda:{},pei:{intro:'',strengths:'',difficulties:'',strategies:'',note_coord:'',objectives:[]},objectives:[]};
+  return {assessments:{},scheda:{},pei:{intro:'',strengths:'',difficulties:'',strategies:'',note_coord:'',objectives:[]},objectives:[],comm:[],verbali:[]};
 }
 async function saveCD(cid,d){
   syncShow('saving');
-  await sSet('cd_'+cid,d);
+  await sSet('labdata/'+S.lab.id+'/cd_'+cid,d);
   syncShow('ok');
 }
 function syncShow(s){
@@ -403,10 +580,17 @@ function syncShow(s){
 /* ══════════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════════ */
-let S={user:null,role:null,client:null,page:'sel'};
+let S={user:null,role:null,lab:null,client:null,page:'labsel'};
 let chartInst=[];
 let pendingScores={};
 let openForms={};
+let labsCache=[];
+let unlockedLabs=new Set();
+try{ unlockedLabs=new Set(JSON.parse(sessionStorage.getItem('eliodoro_unlocked')||'[]')); }catch(e){}
+function persistUnlocked(){ try{ sessionStorage.setItem('eliodoro_unlocked', JSON.stringify([...unlockedLabs])); }catch(e){} }
+
+function isSupervisor(){ return S.role==='direttore'||S.role==='coordinatore'||S.role==='segreteria'; }
+function bypassLabLock(){ return S.role==='direttore'||S.role==='segreteria'; }
 
 /* ══════════════════════════════════════════════════════
    AUTH
@@ -418,24 +602,24 @@ async function doLogin(){
   errEl.classList.add('hidden');
   if(!code||!pw){errEl.textContent='Inserisci codice e password.';errEl.classList.remove('hidden');return;}
   if(!isConfigured){errEl.textContent='Configura Firebase prima di usare la piattaforma.';errEl.classList.remove('hidden');return;}
+  await ensureMigrated();
   const correctPw=await getPassword();
   if(pw!==correctPw){errEl.textContent='Password errata.';errEl.classList.remove('hidden');return;}
   const users=await getUsers();
   const u=users.find(x=>x.id===code);
   if(!u){errEl.textContent='Codice operatore non riconosciuto.';errEl.classList.remove('hidden');return;}
-  S.user=u;S.role=u.role;
+  S.user=u;S.role=u.role;S.lab=null;S.client=null;
   document.getElementById('loginWrap').classList.add('hidden');
   document.getElementById('mainWrap').classList.remove('hidden');
-  document.getElementById('roleChip').textContent=u.role==='coordinator'?'Coordinatore':'Educatore';
-  document.getElementById('roleChip').className='chip '+(u.role==='coordinator'?'chip-coord':'chip-edu');
+  document.getElementById('roleChip').textContent=ROLE_LABEL[u.role]||u.role;
+  document.getElementById('roleChip').className='chip '+(ROLE_CHIP_CLASS[u.role]||'chip-edu');
   document.getElementById('userNameTop').textContent=u.name;
   document.getElementById('codeIn').value='';
   document.getElementById('pwIn').value='';
-  go('sel');
+  goLabSel();
 }
-
 function doLogout(){
-  S={user:null,role:null,client:null,page:'sel'};
+  S={user:null,role:null,lab:null,client:null,page:'labsel'};
   chartInst.forEach(c=>{try{c.destroy();}catch(e){}});
   chartInst=[];pendingScores={};openForms={};
   document.getElementById('mainWrap').classList.add('hidden');
@@ -443,32 +627,69 @@ function doLogout(){
 }
 
 /* ══════════════════════════════════════════════════════
-   NAVIGATION
+   NAVIGAZIONE
 ══════════════════════════════════════════════════════ */
+function goLabSel(){
+  S.lab=null;S.client=null;
+  document.getElementById('labChip').classList.add('hidden');
+  document.getElementById('btnChangeLab').classList.add('hidden');
+  go('labsel');
+}
 function go(page){
   if(!S.user)return;
+  const noLab=['labsel','labadmin'];
+  if(!noLab.includes(page)&&!S.lab){go('labsel');return;}
   const noClient=['sel','admin'];
-  if(!noClient.includes(page)&&!S.client){alert('Seleziona prima un utente.');return;}
+  if(!noLab.includes(page)&&!noClient.includes(page)&&!S.client){alert('Seleziona prima un utente.');return;}
   S.page=page;
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const el=document.getElementById('n-'+page);if(el)el.classList.add('active');
   chartInst.forEach(c=>{try{c.destroy();}catch(e){}});chartInst=[];
   pendingScores={};openForms={};
+  renderSidebar();
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('n-'+page);if(el)el.classList.add('active');
   loadPage(page);
 }
-
+function renderSidebar(){
+  const sb=document.getElementById('sidebar');
+  let h='';
+  if(!S.lab){
+    h+='<div class="nav-sec">Servizi</div>';
+    h+='<div class="nav-item" id="n-labsel" onclick="go(\'labsel\')">🗂 <span>Seleziona servizio</span></div>';
+    if(isSupervisor()) h+='<div class="nav-item" id="n-labadmin" onclick="go(\'labadmin\')">🛡 <span>Gestione globale</span></div>';
+  } else {
+    h+='<div class="nav-sec">Servizio</div>';
+    h+='<div class="nav-item" id="n-labsel-x" onclick="goLabSel()">🔄 <span>Cambia servizio</span></div>';
+    h+='<div class="nav-sec">Utente</div>';
+    h+='<div class="nav-item" id="n-sel" onclick="go(\'sel\')">👥 <span>Seleziona</span></div>';
+    h+='<div class="nav-item" id="n-scheda" onclick="go(\'scheda\')">🪪 <span>Scheda</span></div>';
+    h+='<div class="nav-item" id="n-admin" onclick="go(\'admin\')">⚙️ <span>Gestione</span></div>';
+    h+='<div class="nav-sec">Sezioni</div>';
+    h+='<div class="nav-item" id="n-val" onclick="go(\'val\')">✅ <span>Valutazione</span></div>';
+    h+='<div class="nav-item" id="n-pei" onclick="go(\'pei\')">📄 <span>PEI</span></div>';
+    h+='<div class="nav-item" id="n-obj" onclick="go(\'obj\')">🎯 <span>Obiettivi</span></div>';
+    h+='<div class="nav-item" id="n-and" onclick="go(\'and\')">📈 <span>Andamento</span></div>';
+    h+='<div class="nav-item" id="n-comm" onclick="go(\'comm\')">📨 <span>Comunicazioni</span></div>';
+    if(isSupervisor()) h+='<div class="nav-item" id="n-verbali" onclick="go(\'verbali\')">📔 <span>Verbali</span></div>';
+    if(isSupervisor()) h+='<div class="nav-sec">Cooperativa</div><div class="nav-item" id="n-labadmin" onclick="go(\'labadmin\')">🛡 <span>Gestione globale</span></div>';
+  }
+  sb.innerHTML=h;
+}
 async function loadPage(p){
   const c=document.getElementById('content');
   c.innerHTML='<div style="padding:2rem;text-align:center"><span class="spinner"></span> Caricamento...</div>';
   try{
     let html='';
-    if(p==='sel') html=await pgSel();
+    if(p==='labsel') html=await pgLabSel();
+    else if(p==='labadmin') html=await pgLabAdmin();
+    else if(p==='sel') html=await pgSel();
     else if(p==='scheda') html=await pgScheda();
     else if(p==='admin') html=await pgAdmin();
     else if(p==='val') html=await pgVal();
     else if(p==='pei') html=await pgPEI();
     else if(p==='obj') html=await pgObj();
     else if(p==='and') html=await pgAnd();
+    else if(p==='comm') html=await pgComm();
+    else if(p==='verbali') html=await pgVerbali();
     c.innerHTML=html;
     if(p==='and') setTimeout(drawCharts,120);
   }catch(e){
@@ -508,11 +729,166 @@ function entryHtml(e){
 }
 
 /* ══════════════════════════════════════════════════════
+   PAGE: SELEZIONA SERVIZIO / LABORATORIO
+══════════════════════════════════════════════════════ */
+async function pgLabSel(){
+  await ensureMigrated();
+  labsCache=await getLabs();
+  let h='<div class="pg-title">🗂 Seleziona servizio</div>';
+  h+='<div style="font-size:12px;color:#888;margin-bottom:12px">Cooperativa Eliodoro — scegli il servizio o laboratorio su cui vuoi lavorare.</div>';
+  h+='<div class="lab-grid">';
+  labsCache.forEach(l=>{
+    const bypass=bypassLabLock();
+    const open=bypass||unlockedLabs.has(l.id);
+    const formOpen=openForms['labpw_'+l.id];
+    h+='<div class="lab-card'+(open?'':' locked')+'" onclick="'+(open?'enterLab(\''+l.id+'\')':'toggleForm(\'labpw_'+l.id+'\')')+'">'
+      +'<div class="lab-icon">'+(l.icon||'📁')+'</div>'
+      +'<div class="lab-name">'+x(l.name)+'</div>'
+      +'<div class="lab-status'+(open?' open':'')+'">'+(open?'🔓 Accesso disponibile':'🔒 Richiede password')+'</div>';
+    if(!open){
+      h+='<div id="form_labpw_'+l.id+'" class="labpw-form '+(formOpen?'':'hidden')+'" onclick="event.stopPropagation()">'
+        +'<input type="password" id="labpw_in_'+l.id+'" placeholder="Password del laboratorio" onkeydown="if(event.key===\'Enter\')confirmLabPw(\''+l.id+'\')" />'
+        +'<div style="display:flex;gap:6px;margin-top:6px"><button class="btn-p" onclick="confirmLabPw(\''+l.id+'\')">✓ Entra</button><button class="btn" onclick="toggleForm(\'labpw_'+l.id+'\')">Annulla</button></div>'
+        +'<div class="labpw-err hidden" id="labpw_err_'+l.id+'">Password errata.</div>'
+        +'</div>';
+    }
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+function enterLab(labId){
+  const l=labsCache.find(x=>x.id===labId);if(!l)return;
+  S.lab={id:l.id,name:l.name,icon:l.icon};
+  document.getElementById('labChip').textContent=(l.icon||'📁')+' '+l.name;
+  document.getElementById('labChip').classList.remove('hidden');
+  document.getElementById('btnChangeLab').classList.remove('hidden');
+  go('sel');
+}
+function confirmLabPw(labId){
+  const l=labsCache.find(x=>x.id===labId);if(!l)return;
+  const val=document.getElementById('labpw_in_'+labId)?.value||'';
+  const errEl=document.getElementById('labpw_err_'+labId);
+  if(val!==l.password){ if(errEl) errEl.classList.remove('hidden'); return; }
+  unlockedLabs.add(labId); persistUnlocked();
+  enterLab(labId);
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE: GESTIONE GLOBALE (utenti, laboratori, password squadra)
+══════════════════════════════════════════════════════ */
+async function pgLabAdmin(){
+  if(!isSupervisor()) return '<div class="empty">🔒 Accesso riservato a direzione, coordinamento e segreteria.</div>';
+  const users=await getUsers();
+  const labs=await getLabs();
+  const pw=await getPassword();
+  let h='<div class="pg-title">🛡 Gestione globale — Cooperativa Eliodoro</div>';
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">💾 Backup</div></div>'
+    +'<div style="font-size:12px;color:#666;margin-bottom:8px">Scarica una copia completa di tutti i dati (operatori, laboratori, utenti seguiti, valutazioni, PEI, verbali...) in un file sul tuo computer. Fallo periodicamente come rete di sicurezza.</div>'
+    +'<button class="btn-p" onclick="downloadBackup()">⬇️ Scarica backup completo (JSON)</button></div>';
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">🔒 Password condivisa del team</div></div>'
+    +'<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">'
+    +'<div style="flex:1;min-width:160px"><label style="font-size:11px;font-weight:600;color:#666;display:block;margin-bottom:4px">Password</label><input type="text" id="newTeamPw" value="'+xv(pw)+'" /></div>'
+    +'<button class="btn-p" onclick="changeTeamPassword()">✓ Salva</button></div>'
+    +'<div style="font-size:11px;color:#aaa;margin-top:6px">Serve per il login personale di tutti gli operatori. È diversa dalla password di ogni laboratorio.</div></div>';
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">👥 Operatori della cooperativa</div></div>';
+  users.forEach((u,i)=>{
+    h+='<div class="admin-row"><div style="flex:1"><span style="font-weight:500">'+x(u.name)+'</span>'
+      +' <span class="chip '+(ROLE_CHIP_CLASS[u.role]||'chip-edu')+'">'+x(u.id)+'</span>'
+      +' <span style="font-size:11px;color:#888">'+(ROLE_LABEL[u.role]||u.role)+'</span>'
+      +(u.id===S.user.id?' <span style="font-size:11px;color:#bbb">(tu)</span>':'')+'</div>'
+      +(u.id!==S.user.id?'<button class="btn-red" onclick="toggleForm(\'delUser'+i+'\')">🗑 Elimina</button>':'')+' </div>'
+      +(u.id!==S.user.id?confirmBox('delUser'+i,'Eliminare operatore: '+u.name+'?','deleteUser('+i+')'):'');
+  });
+  h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0ee">'
+    +'<div style="font-size:12px;font-weight:600;margin-bottom:7px;color:#555">Aggiungi operatore</div>'
+    +'<div class="field-row"><div class="f"><label>Codice</label><input type="text" id="nu_id" placeholder="es. EDU004" /></div>'
+    +'<div class="f"><label>Nome e cognome</label><input type="text" id="nu_name" /></div>'
+    +'<div class="f"><label>Ruolo</label><select id="nu_role">'
+    +'<option value="educatore">Educatore</option><option value="coordinatore">Coordinatrice/ore</option>'
+    +'<option value="direttore">Direttore</option><option value="segreteria">Segreteria</option></select></div></div>'
+    +'<button class="btn-p" onclick="addUser()">+ Aggiungi operatore</button></div>';
+  h+='</div>';
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">🗂 Laboratori e servizi</div><button class="btn" onclick="toggleForm(\'addLab\')">+ Nuovo servizio</button></div>';
+  const openL=openForms['addLab'];
+  h+='<div id="form_addLab" class="inline-form '+(openL?'':'hidden')+'"><div class="inline-form-title">Nuovo servizio/laboratorio</div>'
+    +'<div class="field-row"><div class="f"><label>Nome</label><input type="text" id="nl_name" placeholder="es. Nuovo laboratorio" /></div>'
+    +'<div class="f"><label>Icona (emoji)</label><input type="text" id="nl_icon" placeholder="es. 🧩" /></div>'
+    +'<div class="f"><label>Password</label><input type="text" id="nl_pw" placeholder="Password del laboratorio" /></div></div>'
+    +'<button class="btn-p" onclick="confirmAddLab()">✓ Crea servizio</button></div>';
+  labs.forEach((l,i)=>{
+    h+='<div class="admin-row"><div style="flex:1"><span style="font-weight:500">'+(l.icon||'📁')+' '+x(l.name)+'</span></div>'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+      +'<input type="text" id="labpw_edit_'+i+'" value="'+xv(l.password)+'" style="width:170px" />'
+      +'<button class="btn" onclick="saveLabPw('+i+')">✓</button>'
+      +'<button class="btn-red" onclick="toggleForm(\'delLab'+i+'\')">🗑</button></div></div>'
+      +confirmBox('delLab'+i,'Eliminare il servizio "'+l.name+'"? I dati resteranno su Firebase ma non saranno più accessibili dall\'app.','deleteLab('+i+')');
+  });
+  h+='<div style="font-size:11px;color:#aaa;margin-top:8px">Comunica la password di ciascun laboratorio solo agli operatori che devono lavorarci.</div>';
+  h+='</div>';
+  return h;
+}
+async function changeTeamPassword(){
+  const np=(document.getElementById('newTeamPw')?.value||'').trim();
+  if(!np||np.length<4){alert('Password troppo corta.');return;}
+  await sSet('password',np);alert('Password aggiornata.');
+}
+async function addUser(){
+  const id=(document.getElementById('nu_id')?.value||'').trim().toUpperCase();
+  const name=(document.getElementById('nu_name')?.value||'').trim();
+  const role=document.getElementById('nu_role')?.value||'educatore';
+  if(!id||!name){alert('Inserisci codice e nome.');return;}
+  const users=await getUsers();if(users.find(u=>u.id===id)){alert('Codice già esistente.');return;}
+  users.push({id,name,role});await saveUsers(users);go('labadmin');
+}
+async function deleteUser(i){const users=await getUsers();users.splice(i,1);await saveUsers(users);go('labadmin');}
+async function confirmAddLab(){
+  const name=(document.getElementById('nl_name')?.value||'').trim();
+  if(!name){alert('Inserisci un nome per il servizio.');return;}
+  const icon=(document.getElementById('nl_icon')?.value||'').trim()||'📁';
+  const password=(document.getElementById('nl_pw')?.value||'').trim()||'Eliodoro2026';
+  const id='lab_'+Date.now();
+  const labs=await getLabs();labs.push({id,name,icon,password});
+  await saveLabs(labs);
+  await sSet('labdata/'+id+'/areas',[]);
+  await sSet('labdata/'+id+'/clients',[]);
+  await sSet('labdata/'+id+'/sfields',DEF_SCHEDA_FIELDS);
+  openForms['addLab']=false;go('labadmin');
+}
+async function saveLabPw(i){
+  const labs=await getLabs();
+  const val=(document.getElementById('labpw_edit_'+i)?.value||'').trim();
+  if(!val){alert('La password non può essere vuota.');return;}
+  labs[i].password=val;await saveLabs(labs);alert('Password del laboratorio aggiornata.');
+}
+async function downloadBackup(){
+  if(!isSupervisor()){alert('Funzione riservata a direzione, coordinamento e segreteria.');return;}
+  try{
+    const snap=await get(ref(db, ROOT));
+    const data=snap.exists()?snap.val():{};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const stamp=new Date().toISOString().slice(0,10);
+    a.href=url;a.download='eliodoro-backup-'+stamp+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){
+    alert('Errore durante il backup: '+e.message);
+  }
+}
+async function deleteLab(i){const labs=await getLabs();labs.splice(i,1);await saveLabs(labs);go('labadmin');}
+
+/* ══════════════════════════════════════════════════════
    PAGE: SELEZIONA UTENTE
 ══════════════════════════════════════════════════════ */
 async function pgSel(){
   const clients=await getClients();
-  let h='<div class="pg-title">👥 Seleziona utente</div>';
+  let h='<div class="pg-title">👥 Seleziona utente — '+(S.lab.icon||'')+' '+x(S.lab.name)+'</div>';
   if(!clients.length) return h+'<div class="empty">Nessun utente. Aggiungili in Gestione.</div>';
   clients.forEach(cl=>{
     const sel=S.client&&S.client.id===cl.id;
@@ -540,21 +916,21 @@ async function pgScheda(){
   const cd=await getCD(S.client.id);
   const fields=await getSchedaFields();
   const scheda=cd.scheda||{};
-  const isCoord=S.role==='coordinator';
+  const canEdit=isSupervisor();
   let h='<div class="pg-title">🪪 Scheda — '+x(S.client.name)+'</div>';
   h+='<div class="card"><div class="card-hd"><div class="card-hd-l">ℹ️ Dati principali</div></div>'
     +'<div class="field-row">'
     +'<div class="f"><label>Nome e cognome</label><input type="text" id="sc_name" value="'+xv(S.client.name)+'" onchange="saveSchedaBase()" /></div>'
     +'<div class="f"><label>Anno di nascita</label><input type="text" id="sc_birth" value="'+xv(S.client.birth||'')+'" onchange="saveSchedaBase()" /></div>'
     +'</div><div class="field-row"><div class="f full"><label>Diagnosi</label><input type="text" id="sc_diagnosis" value="'+xv(S.client.diagnosis||'')+'" onchange="saveSchedaBase()" /></div></div></div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">📋 Contatti e riferimenti</div>'+(isCoord?'<button class="btn" onclick="toggleForm(\'addField\')">+ Campo</button>':'')+' </div>';
-  if(isCoord){
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">📋 Contatti e riferimenti</div>'+(canEdit?'<button class="btn" onclick="toggleForm(\'addField\')">+ Campo</button>':'')+' </div>';
+  if(canEdit){
     const open=openForms['addField'];
     h+='<div id="form_addField" class="inline-form '+(open?'':'hidden')+'"><div class="inline-form-title">Nuovo campo scheda</div><input type="text" id="newFieldLabel" placeholder="Nome campo (es. Tutore legale)" /><div style="display:flex;gap:6px;margin-top:7px"><button class="btn-p" onclick="confirmAddField()">✓ Aggiungi</button><button class="btn" onclick="toggleForm(\'addField\')">Annulla</button></div></div>';
   }
   fields.forEach((f,fi)=>{
     const val=scheda[f.id]||'';
-    h+='<div class="extra-field-row"><span style="width:180px;flex-shrink:0;font-size:12px;font-weight:500;color:#666">'+x(f.label)+'</span><input type="text" value="'+xv(val)+'" onchange="saveSchedaFieldVal(\''+f.id+'\',this.value)" style="flex:1" />'+(isCoord?'<button class="btn-red" onclick="delSchedaField('+fi+')">🗑</button>':'')+'</div>';
+    h+='<div class="extra-field-row"><span style="width:180px;flex-shrink:0;font-size:12px;font-weight:500;color:#666">'+x(f.label)+'</span><input type="text" value="'+xv(val)+'" onchange="saveSchedaFieldVal(\''+f.id+'\',this.value)" style="flex:1" />'+(canEdit?'<button class="btn-red" onclick="delSchedaField('+fi+')">🗑</button>':'')+'</div>';
   });
   h+='</div>';
   const att=scheda['attivita']||{};
@@ -566,22 +942,22 @@ async function pgScheda(){
   fasce.forEach(fa=>{
     h+='<tr><td style="padding:5px;font-weight:500;background:#f5f5f3;border:1px solid #e8e8e5">'+fa+'</td>';
     giorni.forEach(g=>{
-      const v=(att[fa]||{})[g]||'';
-      h+='<td style="border:1px solid #e8e8e5;padding:2px"><input type="text" value="'+xv(v)+'" onchange="saveAttivita(\''+fa+'\',\''+g+'\',this.value)" style="width:100%;border:none;background:transparent;padding:3px 4px;font-size:11px" /></td>';
+      const v=(att[fa]&&att[fa][g])||'';
+      h+='<td style="padding:2px;border:1px solid #e8e8e5"><input type="text" value="'+xv(v)+'" onchange="saveAttivita(\''+fa+'\',\''+g+'\',this.value)" style="width:100%;border:none;padding:4px;font-size:11px;text-align:center" /></td>';
     });
     h+='</tr>';
   });
   h+='</table></div></div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">📝 Note aggiuntive</div></div><textarea onchange="saveSchedaNota(this.value)">'+x(scheda['note_scheda']||'')+'</textarea></div>';
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">📝 Note</div></div><textarea onchange="saveSchedaNota(this.value)">'+x(scheda['note_scheda']||'')+'</textarea></div>';
   return h;
 }
 async function saveSchedaBase(){
-  const name=document.getElementById('sc_name')?.value||S.client.name;
-  const birth=document.getElementById('sc_birth')?.value||S.client.birth;
-  const diagnosis=document.getElementById('sc_diagnosis')?.value||S.client.diagnosis;
+  const name=(document.getElementById('sc_name')?.value||'').trim();
+  const birth=(document.getElementById('sc_birth')?.value||'').trim();
+  const diagnosis=(document.getElementById('sc_diagnosis')?.value||'').trim();
   const clients=await getClients();
   const i=clients.findIndex(c=>c.id===S.client.id);if(i<0)return;
-  clients[i]={...clients[i],name,birth,diagnosis};
+  clients[i].name=name||clients[i].name;clients[i].birth=birth;clients[i].diagnosis=diagnosis;
   S.client=clients[i];await saveClients(clients);
 }
 async function saveSchedaFieldVal(fid,v){const cd=await getCD(S.client.id);cd.scheda[fid]=v;await saveCD(S.client.id,cd);}
@@ -597,42 +973,16 @@ async function confirmAddField(){
 async function delSchedaField(fi){const fields=await getSchedaFields();fields.splice(fi,1);await saveSchedaFields(fields);go('scheda');}
 
 /* ══════════════════════════════════════════════════════
-   PAGE: GESTIONE
+   PAGE: GESTIONE DEL LABORATORIO (aree, utenti seguiti, campi scheda)
 ══════════════════════════════════════════════════════ */
 async function pgAdmin(){
-  const users=await getUsers();
   const clients=await getClients();
   const areas=await getAreas();
-  const isCoord=S.role==='coordinator';
-  const pw=await getPassword();
-  let h='<div class="pg-title">⚙️ Gestione piattaforma</div>';
-  if(isCoord){
-    h+='<div class="card"><div class="card-hd"><div class="card-hd-l">🔒 Password condivisa del team</div></div>'
-      +'<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">'
-      +'<div style="flex:1;min-width:160px"><label style="font-size:11px;font-weight:600;color:#666;display:block;margin-bottom:4px">Password</label><input type="text" id="newPw" value="'+xv(pw)+'" /></div>'
-      +'<button class="btn-p" onclick="changePassword()">✓ Salva</button></div>'
-      +'<div style="font-size:11px;color:#aaa;margin-top:6px">Tutti gli operatori usano questa stessa password.</div></div>';
-  }
-  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">👥 Operatori</div></div>';
-  users.forEach((u,i)=>{
-    h+='<div class="admin-row"><div style="flex:1"><span style="font-weight:500">'+x(u.name)+'</span>'
-      +' <span class="chip '+(u.role==='coordinator'?'chip-coord':'chip-edu')+'">'+x(u.id)+'</span>'
-      +' <span style="font-size:11px;color:#888">'+( u.role==='coordinator'?'Coordinatore':'Educatore')+'</span>'
-      +(u.id===S.user.id?' <span style="font-size:11px;color:#bbb">(tu)</span>':'')+'</div>'
-      +(isCoord&&u.id!==S.user.id?'<button class="btn-red" onclick="toggleForm(\'delUser'+i+'\')">🗑 Elimina</button>':'')+' </div>'
-      +(isCoord&&u.id!==S.user.id?confirmBox('delUser'+i,'Eliminare operatore: '+u.name+'?','deleteUser('+i+')'):'');
-  });
-  if(isCoord){
-    h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0ee">'
-      +'<div style="font-size:12px;font-weight:600;margin-bottom:7px;color:#555">Aggiungi operatore</div>'
-      +'<div class="field-row"><div class="f"><label>Codice</label><input type="text" id="nu_id" placeholder="es. EDU003" /></div>'
-      +'<div class="f"><label>Nome e cognome</label><input type="text" id="nu_name" /></div>'
-      +'<div class="f"><label>Ruolo</label><select id="nu_role"><option value="educator">Educatore</option><option value="coordinator">Coordinatore</option></select></div></div>'
-      +'<button class="btn-p" onclick="addUser()">+ Aggiungi operatore</button></div>';
-  }
-  h+='</div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">🧑 Utenti seguiti</div>'+(isCoord?'<button class="btn" onclick="toggleForm(\'addClient\')">+ Aggiungi</button>':'')+' </div>';
-  if(isCoord){
+  const canEdit=isSupervisor();
+  let h='<div class="pg-title">⚙️ Gestione — '+(S.lab.icon||'')+' '+x(S.lab.name)+'</div>';
+
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">🧑 Utenti seguiti</div>'+(canEdit?'<button class="btn" onclick="toggleForm(\'addClient\')">+ Aggiungi</button>':'')+' </div>';
+  if(canEdit){
     const open=openForms['addClient'];
     h+='<div id="form_addClient" class="inline-form '+(open?'':'hidden')+'"><div class="inline-form-title">Nuovo utente seguito</div>'
       +'<div class="field-row"><div class="f"><label>Nome e cognome</label><input type="text" id="nc_name" /></div>'
@@ -643,12 +993,12 @@ async function pgAdmin(){
   clients.forEach((cl,i)=>{
     h+='<div class="admin-row"><div style="flex:1"><span style="font-weight:500">'+x(cl.name)+'</span>'
       +'<span style="font-size:11px;color:#888;display:block">'+x(cl.diagnosis||'—')+' · '+x(cl.birth||'—')+'</span></div>'
-      +(isCoord?'<button class="btn-red" onclick="toggleForm(\'delClient'+i+'\')">🗑 Elimina</button>':'')+' </div>'
-      +(isCoord?confirmBox('delClient'+i,'Eliminare "'+cl.name+'" e TUTTI i suoi dati?','deleteClient('+i+')'):'');
+      +(canEdit?'<button class="btn-red" onclick="toggleForm(\'delClient'+i+'\')">🗑 Elimina</button>':'')+' </div>'
+      +(canEdit?confirmBox('delClient'+i,'Eliminare "'+cl.name+'" e TUTTI i suoi dati?','deleteClient('+i+')'):'');
   });
   h+='</div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">✅ Aree e competenze di valutazione</div>'+(isCoord?'<button class="btn" onclick="toggleForm(\'addArea\')">+ Nuova area</button>':'')+' </div>';
-  if(isCoord){
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">✅ Aree e competenze di valutazione</div>'+(canEdit?'<button class="btn" onclick="toggleForm(\'addArea\')">+ Nuova area</button>':'')+' </div>';
+  if(canEdit){
     const open=openForms['addArea'];
     h+='<div id="form_addArea" class="inline-form '+(open?'':'hidden')+'"><div class="inline-form-title">Nuova area di valutazione</div>'
       +'<div class="field-row"><div class="f"><label>Nome area</label><input type="text" id="na_label" placeholder="es. Spesa, Tempo libero..." /></div>'
@@ -657,10 +1007,10 @@ async function pgAdmin(){
   }
   areas.forEach((area,ai)=>{
     h+='<div class="area-block"><div class="area-hd"><span style="font-size:12px;font-weight:500">'+(area.icon||'📋')+' '+x(area.label)+'</span>'
-      +(isCoord?'<div style="display:flex;gap:3px;flex-wrap:wrap"><button class="btn" onclick="toggleForm(\'addItem'+ai+'\')">+ Competenza</button>'
+      +(canEdit?'<div style="display:flex;gap:3px;flex-wrap:wrap"><button class="btn" onclick="toggleForm(\'addItem'+ai+'\')">+ Competenza</button>'
       +'<button class="btn-red" onclick="toggleForm(\'delArea'+ai+'\')">🗑 Area</button></div>':'')+' </div>'
-      +(isCoord?confirmBox('delArea'+ai,'Eliminare area: '+area.label+'?','deleteArea('+ai+')'):'');
-    if(isCoord){
+      +(canEdit?confirmBox('delArea'+ai,'Eliminare area: '+area.label+'?','deleteArea('+ai+')'):'');
+    if(canEdit){
       const key='addItem'+ai;const open=openForms[key];
       h+='<div id="form_'+key+'" class="inline-form '+(open?'':'hidden')+'"><div class="inline-form-title">Nuova competenza</div>'
         +'<input type="text" id="ni_label_'+ai+'" placeholder="Descrizione della competenza..." />'
@@ -669,24 +1019,14 @@ async function pgAdmin(){
     (area.items||[]).forEach((item,ii)=>{
       h+='<div style="padding:3px 0;font-size:12px;border-top:1px solid #f0f0ee"><div style="display:flex;align-items:center;gap:5px">'
         +'<span style="flex:1;color:#555">'+x(item.label)+'</span>'
-        +(isCoord?'<button class="btn-red" style="padding:2px 7px" onclick="toggleForm(\'delItem'+ai+'_'+ii+'\')">🗑</button>':'')+'</div>'
-        +(isCoord?confirmBox('delItem'+ai+'_'+ii,'Eliminare "'+item.label+'"?','deleteItem('+ai+','+ii+')'):'')+'</div>';
+        +(canEdit?'<button class="btn-red" style="padding:2px 7px" onclick="toggleForm(\'delItem'+ai+'_'+ii+'\')">🗑</button>':'')+'</div>'
+        +(canEdit?confirmBox('delItem'+ai+'_'+ii,'Eliminare "'+item.label+'"?','deleteItem('+ai+','+ii+')'):'')+'</div>';
     });
     h+='</div>';
   });
   h+='</div>';
   return h;
 }
-async function changePassword(){const np=(document.getElementById('newPw')?.value||'').trim();if(!np||np.length<4){alert('Password troppo corta.');return;}await sSet('password',np);alert('Password aggiornata.');}
-async function addUser(){
-  const id=(document.getElementById('nu_id')?.value||'').trim().toUpperCase();
-  const name=(document.getElementById('nu_name')?.value||'').trim();
-  const role=document.getElementById('nu_role')?.value||'educator';
-  if(!id||!name){alert('Inserisci codice e nome.');return;}
-  const users=await getUsers();if(users.find(u=>u.id===id)){alert('Codice già esistente.');return;}
-  users.push({id,name,role});await saveUsers(users);go('admin');
-}
-async function deleteUser(i){const users=await getUsers();users.splice(i,1);await saveUsers(users);go('admin');}
 async function confirmAddClient(){
   const name=(document.getElementById('nc_name')?.value||'').trim();if(!name){alert('Inserisci almeno il nome.');return;}
   const birth=(document.getElementById('nc_birth')?.value||'').trim();
@@ -696,7 +1036,7 @@ async function confirmAddClient(){
 }
 async function deleteClient(i){
   const clients=await getClients();const id=clients[i].id;clients.splice(i,1);await saveClients(clients);
-  await sDel('cd_'+id);if(S.client&&S.client.id===id)S.client=null;go('admin');
+  await sDel('labdata/'+S.lab.id+'/cd_'+id);if(S.client&&S.client.id===id)S.client=null;go('admin');
 }
 async function confirmAddArea(){
   const label=(document.getElementById('na_label')?.value||'').trim();
@@ -721,12 +1061,13 @@ async function deleteItem(ai,ii){const areas=await getAreas();areas[ai].items.sp
 async function pgVal(){
   const areas=await getAreas();
   const cd=await getCD(S.client.id);
-  const isCoord=S.role==='coordinator';
+  const readOnly=isSupervisor();
   let h='<div class="pg-title">✅ Valutazione — '+x(S.client.name)+'</div>';
   h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;align-items:center"><span style="font-size:11px;font-weight:600;color:#666">Scala: </span>';
   for(let s=1;s<=5;s++) h+='<span class="sbt a'+s+'" style="cursor:default;width:auto;padding:0 8px">'+s+' — '+SD[s]+'</span>';
   h+='</div>';
-  if(isCoord) h+='<div class="info-box">👁 Modalità lettura: solo gli educatori possono modificare i punteggi.</div>';
+  if(readOnly) h+='<div class="info-box">👁 Modalità lettura: solo gli educatori possono modificare i punteggi.</div>';
+  if(!areas.length) h+='<div class="empty">Nessuna area di valutazione configurata per questo laboratorio.</div>';
   areas.forEach(area=>{
     h+='<div class="card"><div class="card-hd"><div class="card-hd-l">'+(area.icon||'📋')+' '+x(area.label)+'</div></div>';
     if(!area.items||!area.items.length){h+='<div style="font-size:12px;color:#bbb">Nessuna competenza.</div>';}
@@ -740,7 +1081,7 @@ async function pgVal(){
         const iid=String(item.id).replace(/[^a-zA-Z0-9_]/g,'');
         h+='<div class="item-row"><div class="item-lbl">'+x(item.label)+'</div><div><div class="sbt-wrap">';
         for(let s=1;s<=5;s++){
-          if(isCoord) h+='<button class="sbt'+(sc===s?' a'+s:'')+'" disabled>'+s+'</button>';
+          if(readOnly) h+='<button class="sbt'+(sc===s?' a'+s:'')+'" disabled>'+s+'</button>';
           else h+='<button class="sbt'+(sc===s?' a'+s:'')+'" data-iid="'+iid+'" data-score="'+s+'" onclick="scoreClick(this)">'+s+'</button>';
         }
         h+='</div><div class="score-hist" id="hist_'+iid+'">';
@@ -776,7 +1117,7 @@ async function scoreClick(btn){
 async function pgPEI(){
   const cd=await getCD(S.client.id);
   const pei=cd.pei;
-  const isCoord=S.role==='coordinator';
+  const isSup=isSupervisor();
   let h='<div class="pg-title">📄 PEI — '+x(S.client.name)+'</div>';
   h+='<div class="card"><div class="card-hd"><div class="card-hd-l">👤 Profilo funzionale</div></div>'
     +'<div class="pei-sect"><label>Profilo funzionale / diagnosi</label><textarea onchange="savePEIf(\'intro\',this.value)">'+x(pei.intro||'')+'</textarea></div>'
@@ -796,13 +1137,13 @@ async function pgPEI(){
       +'<button class="btn-red" onclick="toggleForm(\'delPeiObj'+oi+'\')">🗑</button></div>'
       +confirmBox('delPeiObj'+oi,'Eliminare obiettivo PEI: '+obj.title+'?','deletePEIObj('+oi+')')
       +'<div class="pei-sect" style="margin-bottom:6px"><label>Descrizione</label><textarea onchange="savePEIObjField('+oi+',\'content\',this.value)">'+x(obj.content||'')+'</textarea></div>';
-    if(isCoord) h+='<div class="pei-sect"><label style="color:#185FA5">💬 Nota coordinatore</label><textarea onchange="savePEIObjField('+oi+',\'coordNote\',this.value)" style="border-color:#B5D4F4">'+x(obj.coordNote||'')+'</textarea></div>';
-    else if(obj.coordNote) h+='<div class="info-box">💬 <strong>Coordinatore:</strong> '+x(obj.coordNote)+'</div>';
+    if(isSup) h+='<div class="pei-sect"><label style="color:#185FA5">💬 Nota coordinamento</label><textarea onchange="savePEIObjField('+oi+',\'coordNote\',this.value)" style="border-color:#B5D4F4">'+x(obj.coordNote||'')+'</textarea></div>';
+    else if(obj.coordNote) h+='<div class="info-box">💬 <strong>Coordinamento:</strong> '+x(obj.coordNote)+'</div>';
     h+='</div>';
   });
   h+='</div>';
-  if(isCoord) h+='<div class="card"><div class="card-hd"><div class="card-hd-l" style="color:#185FA5">💬 Note generali coordinatore</div></div><textarea onchange="savePEIf(\'note_coord\',this.value)" style="border-color:#B5D4F4">'+x(pei.note_coord||'')+'</textarea></div>';
-  else if(pei.note_coord) h+='<div class="card" style="border-color:#B5D4F4"><div style="font-size:11px;font-weight:600;color:#185FA5;margin-bottom:5px">💬 Note del coordinatore</div><div style="font-size:13px">'+x(pei.note_coord)+'</div></div>';
+  if(isSup) h+='<div class="card"><div class="card-hd"><div class="card-hd-l" style="color:#185FA5">💬 Note generali coordinamento</div></div><textarea onchange="savePEIf(\'note_coord\',this.value)" style="border-color:#B5D4F4">'+x(pei.note_coord||'')+'</textarea></div>';
+  else if(pei.note_coord) h+='<div class="card" style="border-color:#B5D4F4"><div style="font-size:11px;font-weight:600;color:#185FA5;margin-bottom:5px">💬 Note del coordinamento</div><div style="font-size:13px">'+x(pei.note_coord)+'</div></div>';
   return h;
 }
 async function savePEIf(field,value){const cd=await getCD(S.client.id);cd.pei[field]=value;await saveCD(S.client.id,cd);}
@@ -822,9 +1163,9 @@ async function deletePEIObj(oi){const cd=await getCD(S.client.id);cd.pei.objecti
 async function pgObj(){
   const cd=await getCD(S.client.id);
   const objs=cd.objectives||[];
-  const isCoord=S.role==='coordinator';
+  const isSup=isSupervisor();
   let h='<div class="pg-title">🎯 Obiettivi operativi — '+x(S.client.name)+'</div>';
-  if(!isCoord){
+  if(!isSup){
     const open=openForms['addObj'];
     h+='<button class="btn" style="margin-bottom:10px" onclick="toggleForm(\'addObj\')">+ Nuovo obiettivo</button>'
       +'<div id="form_addObj" class="inline-form '+(open?'':'hidden')+'"><div class="inline-form-title">Nuovo obiettivo operativo</div>'
@@ -833,7 +1174,7 @@ async function pgObj(){
       +'<div style="display:flex;gap:6px"><button class="btn-p" onclick="confirmAddObj()">✓ Aggiungi</button><button class="btn" onclick="toggleForm(\'addObj\')">Annulla</button></div></div>';
   }
   if(!objs.length){
-    h+='<div class="empty" style="font-size:28px">🎯<br>'+(isCoord?'Nessun obiettivo inserito dagli educatori.':'Nessun obiettivo. Usa il tasto qui sopra.')+'</div>';
+    h+='<div class="empty" style="font-size:28px">🎯<br>'+(isSup?'Nessun obiettivo inserito dagli educatori.':'Nessun obiettivo. Usa il tasto qui sopra.')+'</div>';
   }
   objs.forEach((obj,oi)=>{
     const objE=obj.entries||[];
@@ -843,29 +1184,27 @@ async function pgObj(){
       +'<div class="obj-title">'+x(obj.title)+'</div>'
       +'<div style="font-size:11px;color:#bbb">Dal '+obj.created+(objAvg!==null?' · media: <strong>'+objAvg+'</strong>':'')+'</div>'
       +'</div><div class="obj-actions">'
-      +(!isCoord?'<button class="btn" onclick="toggleForm(\'addSub'+oi+'\')">+ Sotto-ob.</button>'
+      +(!isSup?'<button class="btn" onclick="toggleForm(\'addSub'+oi+'\')">+ Sotto-ob.</button>'
       +'<button class="btn" onclick="togglePanel(\'objEP_'+oi+'\')">📅 Punteggio</button>'
       +'<button class="btn-red" onclick="toggleForm(\'delObj'+oi+'\')">🗑</button>':'')
       +'</div></div>'
-      +(!isCoord?confirmBox('delObj'+oi,'Eliminare obiettivo: '+obj.title+'?','deleteObjective('+oi+')'):'')
-      +(!isCoord?'<div id="form_addSub'+oi+'" class="inline-form '+(subOpen?'':'hidden')+'">'
+      +(!isSup?confirmBox('delObj'+oi,'Eliminare obiettivo: '+obj.title+'?','deleteObjective('+oi+')'):'')
+      +(!isSup?'<div id="form_addSub'+oi+'" class="inline-form '+(subOpen?'':'hidden')+'">'
         +'<div class="inline-form-title">Nuovo sotto-obiettivo</div>'
         +'<input type="text" id="newSubLabel_'+oi+'" placeholder="es. Aprire il rubinetto alla temperatura giusta" />'
         +'<div style="display:flex;gap:6px;margin-top:7px"><button class="btn-p" onclick="confirmAddSub('+oi+')">✓ Aggiungi</button>'
         +'<button class="btn" onclick="toggleForm(\'addSub'+oi+'\')">Annulla</button></div></div>':'')
       +(obj.description?'<div style="font-size:12px;color:#666;margin-bottom:6px">'+x(obj.description)+'</div>':'');
-    // Entry panel obiettivo
     h+='<div id="objEP_'+oi+'" class="hidden entry-panel"><div style="font-size:12px;font-weight:600;margin-bottom:5px">Punteggio obiettivo — '+todayStr()+'</div>'
       +'<div class="mini-scores">';
     for(let s=1;s<=5;s++) h+='<button class="msb" data-key="oE'+oi+'" data-s="'+s+'" onclick="pickScore(this)">'+s+' — '+SL[s]+'</button>';
     h+='</div><textarea id="oC_'+oi+'" placeholder="Commento (opzionale)"></textarea>'
       +'<div style="display:flex;gap:6px;margin-top:6px"><button class="btn-p" onclick="saveObjEntry('+oi+')">✓ Salva</button><button class="btn" onclick="togglePanel(\'objEP_'+oi+'\')">Annulla</button></div></div>';
     objE.slice(-3).reverse().forEach(e=>{ h+=entryHtml(e); });
-    if(isCoord&&objE.length){
-      h+='<div style="margin-top:5px"><textarea id="ocC_'+oi+'" placeholder="Commento coordinatore..." style="font-size:12px;min-height:40px"></textarea>'
+    if(isSup&&objE.length){
+      h+='<div style="margin-top:5px"><textarea id="ocC_'+oi+'" placeholder="Commento coordinamento..." style="font-size:12px;min-height:40px"></textarea>'
         +'<button class="btn" style="margin-top:4px" onclick="saveObjCoordC('+oi+')">💬 Invia</button></div>';
     }
-    // Sotto-obiettivi
     (obj.subObjectives||[]).forEach((sub,si)=>{
       const subE=sub.entries||[];
       const subAvg=subE.length?+(subE.reduce((a,e)=>a+e.score,0)/subE.length).toFixed(1):null;
@@ -875,9 +1214,9 @@ async function pgObj(){
         +'<span class="sub-lbl">'+x(sub.label)+'</span>'
         +(lastSE?'<span class="sbt a'+lastSE.score+'" style="cursor:default;width:auto;padding:1px 8px;display:inline-flex;font-size:11px">'+lastSE.score+' '+SL[lastSE.score]+'</span>':'')
         +(subAvg!==null?'<span style="font-size:10px;color:#bbb">m.'+subAvg+'</span>':'')
-        +(!isCoord?'<button class="btn" style="padding:3px 7px" onclick="togglePanel(\'subEP_'+oi+'_'+si+'\')">+</button>'
+        +(!isSup?'<button class="btn" style="padding:3px 7px" onclick="togglePanel(\'subEP_'+oi+'_'+si+'\')">+</button>'
         +'<button class="btn-red" onclick="toggleForm(\'delSub'+oi+'_'+si+'\')">🗑</button>':'')+'</div>'
-        +(!isCoord?confirmBox('delSub'+oi+'_'+si,'Eliminare il sotto-obiettivo "'+sub.label+'"?','deleteSubObj('+oi+','+si+')'):'')
+        +(!isSup?confirmBox('delSub'+oi+'_'+si,'Eliminare il sotto-obiettivo "'+sub.label+'"?','deleteSubObj('+oi+','+si+')'):'')
         +'<div id="subEP_'+oi+'_'+si+'" class="hidden entry-panel">'
         +'<div style="font-size:12px;font-weight:600;margin-bottom:5px">Punteggio — '+todayStr()+'</div>'
         +'<div class="mini-scores">';
@@ -886,15 +1225,15 @@ async function pgObj(){
         +'<div style="display:flex;gap:6px;margin-top:6px"><button class="btn-p" onclick="saveSubEntry('+oi+','+si+')">✓ Salva</button><button class="btn" onclick="togglePanel(\'subEP_'+oi+'_'+si+'\')">Annulla</button></div></div>'
         +'<div class="entry-list">';
       subE.slice(-3).reverse().forEach(e=>{ h+=entryHtml(e); });
-      if(isCoord&&subE.length){
-        h+='<div><textarea id="scC_'+oi+'_'+si+'" placeholder="Commento coordinatore..." style="font-size:11px;min-height:36px;margin-top:4px"></textarea>'
+      if(isSup&&subE.length){
+        h+='<div><textarea id="scC_'+oi+'_'+si+'" placeholder="Commento coordinamento..." style="font-size:11px;min-height:36px;margin-top:4px"></textarea>'
           +'<button class="btn" style="margin-top:3px;font-size:11px;padding:3px 8px" onclick="saveSubCoordC('+oi+','+si+')">💬 Commenta</button></div>';
       }
       h+='</div></div>';
     });
-    if(obj.coordFeedback) h+='<div class="info-box" style="margin-top:7px">💬 <strong>Feedback coordinatore:</strong> '+x(obj.coordFeedback)+'</div>';
-    if(isCoord){
-      h+='<div style="margin-top:7px"><textarea id="oFb_'+oi+'" placeholder="Feedback coordinatore su questo obiettivo..." style="font-size:12px">'+x(obj.coordFeedback||'')+'</textarea>'
+    if(obj.coordFeedback) h+='<div class="info-box" style="margin-top:7px">💬 <strong>Feedback coordinamento:</strong> '+x(obj.coordFeedback)+'</div>';
+    if(isSup){
+      h+='<div style="margin-top:7px"><textarea id="oFb_'+oi+'" placeholder="Feedback coordinamento su questo obiettivo..." style="font-size:12px">'+x(obj.coordFeedback||'')+'</textarea>'
         +'<button class="btn" style="margin-top:4px" onclick="saveObjFeedback('+oi+')">💬 Salva feedback</button></div>';
     }
     h+='</div>';
@@ -985,12 +1324,91 @@ async function drawCharts(){
   });
 }
 
+/* ══════════════════════════════════════════════════════
+   PAGE: COMUNICAZIONI (coordinamento ↔ educatori, per utente)
+══════════════════════════════════════════════════════ */
+async function pgComm(){
+  const cd=await getCD(S.client.id);
+  const comm=(cd.comm||[]).slice().sort((a,b)=>dSort(b.date)-dSort(a.date));
+  let h='<div class="pg-title">📨 Comunicazioni — '+x(S.client.name)+'</div>';
+  h+='<div style="font-size:12px;color:#888;margin-bottom:10px">Spazio di scambio tra coordinamento ed educatori su questo utente. Visibile a tutti gli operatori del laboratorio.</div>';
+  h+='<div class="card"><div class="inline-form-title" style="margin-bottom:7px">Nuovo messaggio</div>'
+    +'<div class="field-row"><div class="f" style="max-width:160px"><label>Data</label><input type="text" id="comm_date" value="'+todayStr()+'" placeholder="gg/mm/aaaa" /></div></div>'
+    +'<textarea id="comm_text" placeholder="Scrivi qui la comunicazione..."></textarea>'
+    +'<button class="btn-p" style="margin-top:7px" onclick="confirmAddComm()">✓ Invia</button></div>';
+  if(!comm.length) h+='<div class="empty">📨<br>Nessuna comunicazione ancora inserita.</div>';
+  comm.forEach((m,i)=>{
+    const origIdx=(cd.comm||[]).indexOf(m);
+    h+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+      +'<div><div style="font-size:11px;color:#aaa">'+x(m.date)+' · '+x(m.authorName||m.author)+' <span class="chip '+(ROLE_CHIP_CLASS[m.authorRole]||'chip-edu')+'" style="margin-left:4px">'+(ROLE_LABEL[m.authorRole]||'')+'</span></div>'
+      +'<div style="font-size:13px;margin-top:4px;white-space:pre-wrap">'+x(m.text)+'</div></div>'
+      +'<button class="btn-red" onclick="toggleForm(\'delComm'+origIdx+'\')">🗑</button></div>'
+      +confirmBox('delComm'+origIdx,'Eliminare questa comunicazione?','deleteComm('+origIdx+')')+'</div>';
+  });
+  return h;
+}
+async function confirmAddComm(){
+  const date=(document.getElementById('comm_date')?.value||todayStr()).trim();
+  const text=(document.getElementById('comm_text')?.value||'').trim();
+  if(!text){alert('Scrivi un testo prima di inviare.');return;}
+  const cd=await getCD(S.client.id);
+  if(!cd.comm) cd.comm=[];
+  cd.comm.push({date,text,author:S.user.id,authorName:S.user.name,authorRole:S.role});
+  await saveCD(S.client.id,cd);go('comm');
+}
+async function deleteComm(i){const cd=await getCD(S.client.id);cd.comm.splice(i,1);await saveCD(S.client.id,cd);go('comm');}
 
+/* ══════════════════════════════════════════════════════
+   PAGE: VERBALI (solo coordinamento) — diario a scomparsa
+══════════════════════════════════════════════════════ */
+async function pgVerbali(){
+  if(!isSupervisor()) return '<div class="empty">🔒 Sezione riservata al coordinamento.</div>';
+  const cd=await getCD(S.client.id);
+  const verbali=(cd.verbali||[]).map((v,idx)=>({...v,idx})).sort((a,b)=>dSort(b.date)-dSort(a.date));
+  let h='<div class="pg-title">📔 Verbali e note riservate — '+x(S.client.name)+'</div>';
+  h+='<div style="font-size:12px;color:#888;margin-bottom:10px">Visibile solo a direzione, coordinamento e segreteria. Clicca su una voce per aprirla.</div>';
+  const openNew=openForms['addVerbale'];
+  h+='<div class="card"><div class="card-hd"><div class="card-hd-l">Nuovo verbale / nota</div><button class="btn" onclick="toggleForm(\'addVerbale\')">+ Aggiungi</button></div>';
+  h+='<div id="form_addVerbale" class="inline-form '+(openNew?'':'hidden')+'">'
+    +'<div class="field-row"><div class="f" style="max-width:160px"><label>Data</label><input type="text" id="verbale_date" value="'+todayStr()+'" placeholder="gg/mm/aaaa" /></div>'
+    +'<div class="f"><label>Titolo</label><input type="text" id="verbale_title" placeholder="es. Incontro di rete" /></div></div>'
+    +'<textarea id="verbale_text" placeholder="Testo del verbale/nota..."></textarea>'
+    +'<button class="btn-p" style="margin-top:7px" onclick="confirmAddVerbale()">✓ Salva</button></div></div>';
+  if(!verbali.length) h+='<div class="empty">📔<br>Nessun verbale inserito.</div>';
+  verbali.forEach(v=>{
+    const panelId='verbaleBody_'+v.idx;
+    const open=openForms[panelId];
+    h+='<div class="card" style="padding:0;overflow:hidden">'
+      +'<div style="padding:11px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="togglePanel(\''+panelId+'\')">'
+      +'<span style="font-size:13px;font-weight:500">'+x(v.date)+' — '+x(v.title)+'</span>'
+      +'<span style="font-size:11px;color:#bbb">'+(open?'▲':'▼')+'</span></div>'
+      +'<div id="'+panelId+'" class="'+(open?'':'hidden')+'" style="padding:0 16px 14px;border-top:1px solid #f0f0ee">'
+      +'<div style="font-size:13px;white-space:pre-wrap;padding-top:10px">'+x(v.text)+'</div>'
+      +'<button class="btn-red" style="margin-top:8px" onclick="toggleForm(\'delVerbale'+v.idx+'\')">🗑 Elimina</button>'
+      +confirmBox('delVerbale'+v.idx,'Eliminare questo verbale?','deleteVerbale('+v.idx+')')
+      +'</div></div>';
+  });
+  return h;
+}
+async function confirmAddVerbale(){
+  const date=(document.getElementById('verbale_date')?.value||todayStr()).trim();
+  const title=(document.getElementById('verbale_title')?.value||'').trim();
+  const text=(document.getElementById('verbale_text')?.value||'').trim();
+  if(!title){alert('Inserisci un titolo.');return;}
+  const cd=await getCD(S.client.id);
+  if(!cd.verbali) cd.verbali=[];
+  cd.verbali.push({date,title,text});
+  await saveCD(S.client.id,cd);openForms['addVerbale']=false;go('verbali');
+}
+async function deleteVerbale(i){const cd=await getCD(S.client.id);cd.verbali.splice(i,1);await saveCD(S.client.id,cd);go('verbali');}
 
 // Expose all functions to HTML onclick handlers
 window.doLogin=doLogin;
 window.doLogout=doLogout;
 window.go=go;
+window.goLabSel=goLabSel;
+window.enterLab=enterLab;
+window.confirmLabPw=confirmLabPw;
 window.toggleForm=toggleForm;
 window.togglePanel=togglePanel;
 window.pickScore=pickScore;
@@ -1002,10 +1420,13 @@ window.saveAttivita=saveAttivita;
 window.saveSchedaNota=saveSchedaNota;
 window.confirmAddField=confirmAddField;
 window.delSchedaField=delSchedaField;
-window.changePassword=changePassword;
-window.changeUsersPw=changeUsersPw;
+window.changeTeamPassword=changeTeamPassword;
 window.addUser=addUser;
 window.deleteUser=deleteUser;
+window.confirmAddLab=confirmAddLab;
+window.saveLabPw=saveLabPw;
+window.downloadBackup=downloadBackup;
+window.deleteLab=deleteLab;
 window.confirmAddClient=confirmAddClient;
 window.deleteClient=deleteClient;
 window.confirmAddArea=confirmAddArea;
@@ -1025,7 +1446,29 @@ window.saveSubCoordC=saveSubCoordC;
 window.saveObjFeedback=saveObjFeedback;
 window.deleteObjective=deleteObjective;
 window.deleteSubObj=deleteSubObj;
+window.confirmAddComm=confirmAddComm;
+window.deleteComm=deleteComm;
+window.confirmAddVerbale=confirmAddVerbale;
+window.deleteVerbale=deleteVerbale;
 
+/* ══════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════ */
+(async function boot(){
+  await loadDeps();
+  try{
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    auth = getAuth(app);
+    await signInAnonymously(auth);
+    const btn=document.querySelector('#loginWrap .btn-p');
+    if(btn){btn.disabled=false;btn.textContent='Accedi';}
+  }catch(e){
+    console.error('Firebase init error:', e);
+    const errEl=document.getElementById('loginErr');
+    if(errEl){errEl.textContent='Impossibile connettersi al database. Riprova o contatta chi gestisce la piattaforma.';errEl.classList.remove('hidden');}
+  }
+})();
 
 </script>
 </body>
