@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eliodoro — Backup dati</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f0f4f8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center}
+.logo{font-size:32px;margin-bottom:.5rem}
+h1{font-size:20px;font-weight:700;color:#1D6FA4;margin-bottom:.25rem}
+.sub{font-size:13px;color:#888;margin-bottom:1.5rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;justify-content:center;margin-bottom:10px}
+.btn-blue{background:#1D6FA4;color:#fff}
+.btn-blue:hover{background:#155a87}
+.btn-blue:disabled{background:#93b8d4;cursor:not-allowed}
+.btn-green{background:#1D9E75;color:#fff}
+.btn-green:hover{background:#0F6E56}
+.status{margin-top:1rem;padding:10px 14px;border-radius:8px;font-size:13px;display:none}
+.status.ok{background:#E1F5EE;color:#0F6E56;display:block}
+.status.err{background:#FCEBEB;color:#A32D2D;display:block}
+.status.loading{background:#EBF4FB;color:#1D6FA4;display:block}
+.last-backup{font-size:11px;color:#aaa;margin-top:1rem}
+hr{border:none;border-top:1px solid #eee;margin:1.5rem 0}
+.info{font-size:12px;color:#888;line-height:1.6;text-align:left;background:#f5f5f3;border-radius:8px;padding:10px 12px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🌻</div>
+  <h1>Eliodoro — Backup</h1>
+  <div class="sub">Scarica una copia di tutti i dati della piattaforma</div>
+
+  <button class="btn btn-blue" id="btnBackup" onclick="doBackup()">
+    💾 Scarica backup completo
+  </button>
+
+  <button class="btn btn-green" id="btnRestore" onclick="document.getElementById('fileInput').click()">
+    📥 Ripristina da backup
+  </button>
+  <input type="file" id="fileInput" accept=".json" style="display:none" onchange="doRestore(this)" />
+
+  <div class="status" id="status"></div>
+  <div class="last-backup" id="lastBackup"></div>
+
+  <hr>
+  <div class="info">
+    <strong>Come usarlo:</strong><br>
+    • Salva questa pagina nei segnalibri<br>
+    • Clicca "Scarica backup" ogni settimana (es. ogni lunedì)<br>
+    • Conserva i file JSON in una cartella sicura o su Google Drive<br>
+    • In caso di perdita dati, usa "Ripristina da backup"
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const FB = {
+  apiKey: "AIzaSyASvSPhw571Jg0EHseTuo9bMSbhnl2lVrk",
+  authDomain: "eliodoro-3b1bc.firebaseapp.com",
+  databaseURL: "https://eliodoro-3b1bc-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "eliodoro-3b1bc",
+  storageBucket: "eliodoro-3b1bc.firebasestorage.app",
+  messagingSenderId: "535973131978",
+  appId: "1:535973131978:web:a0693ca1094d9186672633"
+};
+
+const app = initializeApp(FB);
+const db  = getDatabase(app);
+
+function showStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+}
+
+window.doBackup = async function() {
+  const btn = document.getElementById('btnBackup');
+  btn.disabled = true;
+  btn.textContent = '⏳ Download in corso...';
+  showStatus('Connessione a Firebase...', 'loading');
+  try {
+    const snap = await get(ref(db, 'eliodoro'));
+    if (!snap.exists()) {
+      showStatus('Nessun dato trovato nel database.', 'err');
+      return;
+    }
+    const data = {
+      _backup_date: new Date().toISOString(),
+      _backup_version: '2.0',
+      eliodoro: snap.val()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const date = new Date().toISOString().split('T')[0];
+    a.href     = url;
+    a.download = `eliodoro-backup-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Save last backup timestamp
+    const ts = new Date().toLocaleString('it-IT');
+    localStorage.setItem('eliodoro_last_backup', ts);
+    document.getElementById('lastBackup').textContent = 'Ultimo backup: ' + ts;
+    showStatus('✅ Backup scaricato correttamente!', 'ok');
+  } catch(e) {
+    showStatus('Errore: ' + e.message, 'err');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '💾 Scarica backup completo';
+  }
+};
+
+window.doRestore = async function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (!confirm(`Stai per ripristinare i dati dal file "${file.name}".\n\nQUESTI DATI SOVRASCRIVERANNO quelli attuali su Firebase.\n\nSei sicura di voler continuare?`)) {
+    input.value = '';
+    return;
+  }
+  showStatus('Lettura file...', 'loading');
+  try {
+    const text = await file.text();
+    const json = JSON.parse(text);
+
+    // Support both old format (direct data) and new format (with _backup_date wrapper)
+    const data = json.eliodoro || json;
+
+    if (!data) {
+      showStatus('File non valido: struttura dati non riconosciuta.', 'err');
+      return;
+    }
+    showStatus('Ripristino in corso...', 'loading');
+    await set(ref(db, 'eliodoro'), data);
+    showStatus('✅ Dati ripristinati correttamente! Ricarica la piattaforma.', 'ok');
+  } catch(e) {
+    showStatus('Errore durante il ripristino: ' + e.message, 'err');
+    console.error(e);
+  } finally {
+    input.value = '';
+  }
+};
+
+// Show last backup time from localStorage
+const last = localStorage.getItem('eliodoro_last_backup');
+if (last) document.getElementById('lastBackup').textContent = 'Ultimo backup: ' + last;
+</script>
+</body>
+</html>
